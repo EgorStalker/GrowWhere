@@ -1,0 +1,204 @@
+{
+  "schema_version": "1.0",
+  "verified_at": "2026-11-14",
+  "status": "partial_research_registry_not_complete_recommendation_model",
+  "region": "US-KS",
+  "usage_notes": [
+    "Unknown fields are null. A threshold alone does not authorize a sowing recommendation.",
+    "Ranges must remain ranges; do not silently select a universal threshold from their endpoints.",
+    "Soil model layers are not equivalent to measurements at a specific depth and local time.",
+    "K-State planting zones require verified spatial assignment before a window is applied to coordinates.",
+    "Planting guidance is seasonal, not a weather forecast or guarantee of crop establishment."
+  ],
+  "sources": {
+    "riley_soil_temperature": {
+      "source_url": "https://www.riley.k-state.edu/crops-livestock/soils-and-crops/cropplantingtemps/",
+      "publisher": "K-State Research and Extension, Riley County",
+      "verified_at": "2026-11-14",
+      "region": "Kansas",
+      "measurement_depth_cm": 5.08,
+      "measurement_local_time": {"start": "10:00", "end": "12:00"},
+      "consecutive_days": {"min": 2, "max": 3},
+      "requires_warming_trend": null
+    },
+    "corn_management_2025": {
+      "source_url": "https://bookstore.ksre.ksu.edu/pubs/kansas-corn-management-2025_MF3208.pdf",
+      "publisher": "K-State Research and Extension",
+      "verified_at": "2026-11-14",
+      "region": "Kansas",
+      "page": 1
+    },
+    "kansas_planting_guide": {
+      "source_url": "https://bookstore.ksre.ksu.edu/pubs/kansas-crop-planting-guide_L818.pdf",
+      "publisher": "K-State Research and Extension",
+      "verified_at": "2026-11-14",
+      "table": "Table 1",
+      "region": "Kansas",
+      "zone_geometry_available": false,
+      "zone_assignment_required": true
+    }
+  },
+  "rules": [
+    {
+      "crop_id": "corn",
+      "crop_type": "grain corn",
+      "region": "US-KS",
+      "verified_at": "2026-11-14",
+      "source_url": "https://www.riley.k-state.edu/crops-livestock/soils-and-crops/cropplantingtemps/",
+      "status": "partial",
+      "measurement_depth_cm": 5.08,
+      "threshold_kind": "published_minimum",
+      "threshold_temperature_C": 10,
+      "threshold_temperature_range_C": null,
+      "source_threshold_F": 50,
+      "consecutive_days": {"min": 2, "max": 3},
+      "requires_warming_trend": null,
+      "optimum_start_rule": {
+        "source_id": "corn_management_2025",
+        "measurement_depth_cm": 5.08,
+        "threshold_temperature_C": 12.777778,
+        "source_threshold_F": 55,
+        "consecutive_days": 3,
+        "forecast_cold_check_required": true
+      },
+      "seasonal_window": {
+        "source_id": "kansas_planting_guide",
+        "zone_assignment_required": true,
+        "windows_by_zone": {
+          "1": [{"start": "04-20", "end": "05-20"}],
+          "2": [{"start": "04-15", "end": "05-20"}],
+          "3": [{"start": "04-01", "end": "05-10"}],
+          "4": [{"start": "03-25", "end": "04-25"}]
+        }
+      },
+      "frost_restrictions": {"numeric_threshold_C": null, "source_id": "corn_management_2025", "rule": "Check cold forecast; maturity and late planting change fall frost exposure."},
+      "soil_workability_rule": {"availability": "not_verified", "rule": null},
+      "blockers": ["planting_zone_geometry", "local_soil_condition_confirmation", "matched_depth_and_time_soil_temperature", "complete_current_forecast"]
+    },
+    {
+      "crop_id": "soy",
+      "crop_type": "soybean",
+      "region": "US-KS",
+      "verified_at": "2026-11-14",
+      "source_url": "https://www.riley.k-state.edu/crops-livestock/soils-and-crops/cropplantingtemps/",
+      "status": "partial",
+      "measurement_depth_cm": 5.08,
+      "threshold_kind": "published_minimum_range",
+      "threshold_temperature_C": null,
+      "threshold_temperature_range_C": [12.777778, 15.555556],
+      "source_threshold_range_F": [55, 60],
+      "consecutive_days": {"min": 2, "max": 3},
+      "requires_warming_trend": null,
+      "seasonal_window": null,
+      "frost_restrictions": {"numeric_threshold_C": null, "rule": null},
+      "soil_workability_rule": {"availability": "not_verified", "rule": null},
+      "blockers": ["select_locally_applicable_threshold_from_published_range", "local_window_and_maturity_group", "soil_workability", "frost_rule", "matched_depth_and_time_soil_temperature", "complete_current_forecast"]
+    },
+    {
+      "crop_id": "sorghum",
+      "crop_type": "grain sorghum",
+      "region": "US-KS",
+      "verified_at": "2026-11-14",
+      "source_url": "https://www.riley.k-state.edu/crops-livestock/soils-and-crops/cropplantingtemps/",
+      "status": "partial",
+      "measurement_depth_cm": 5.08,
+      "threshold_kind": "published_minimum_range",
+      "threshold_temperature_C": null,
+      "threshold_temperature_range_C": [18.333333, 21.111111],
+      "source_threshold_range_F": [65, 70],
+      "consecutive_days": {"min": 2, "max": 3},
+      "requires_warming_trend": null,
+      "seasonal_window": {
+        "source_id": "kansas_planting_guide",
+        "zone_assignment_required": true,
+        "windows_by_zone": {
+          "1": [{"start": "05-15", "end": "06-10"}],
+          "2": [{"start": "05-15", "end": "06-20"}],
+          "3": [{"start": "05-15", "end": "06-20"}],
+          "4": [{"start": "05-01", "end": "05-15"}, {"start": "06-05", "end": "06-25"}]
+        }
+      },
+      "frost_restrictions": {"numeric_threshold_C": null, "rule": null},
+      "soil_workability_rule": {"availability": "not_verified", "rule": null},
+      "blockers": ["select_locally_applicable_threshold_from_published_range", "planting_zone_geometry", "maturity_group_and_frost_rule", "soil_workability", "matched_depth_and_time_soil_temperature", "complete_current_forecast"]
+    },
+    {
+      "crop_id": "cotton",
+      "crop_type": "cotton",
+      "region": "US-KS",
+      "verified_at": "2026-11-14",
+      "source_url": "https://www.riley.k-state.edu/crops-livestock/soils-and-crops/cropplantingtemps/",
+      "status": "partial_threshold_only_no_kansas_sowing_recommendation",
+      "measurement_depth_cm": 5.08,
+      "threshold_kind": "published_minimum_range",
+      "threshold_temperature_C": null,
+      "threshold_temperature_range_C": [18.333333, 21.111111],
+      "source_threshold_range_F": [65, 70],
+      "consecutive_days": {"min": 2, "max": 3},
+      "requires_warming_trend": null,
+      "seasonal_window": null,
+      "frost_restrictions": {"numeric_threshold_C": null, "rule": null},
+      "soil_workability_rule": {"availability": "not_verified", "rule": null},
+      "blockers": ["kansas_local_adaptation_and_maturity", "local_seasonal_window", "select_locally_applicable_threshold_from_published_range", "frost_rule", "soil_workability", "matched_depth_and_time_soil_temperature", "complete_current_forecast"]
+    },
+    {
+      "crop_id": "wheat",
+      "crop_type": "spring wheat",
+      "region": "US-KS",
+      "verified_at": "2026-11-14",
+      "source_url": "https://bookstore.ksre.ksu.edu/pubs/kansas-crop-planting-guide_L818.pdf",
+      "status": "not_recommended_by_guide_requires_review",
+      "measurement_depth_cm": null,
+      "threshold_temperature_C": null,
+      "threshold_temperature_range_C": null,
+      "requires_warming_trend": null,
+      "seasonal_window": null,
+      "regional_caution": "Table 1 footnote marks spring wheat not recommended; dates if considered do not establish a recommendation. Do not use winter-wheat autumn dates for this crop ID.",
+      "frost_restrictions": {"numeric_threshold_C": null, "rule": null},
+      "soil_workability_rule": {"availability": "not_verified", "rule": null},
+      "blockers": ["confirm_crop_type_and_kansas_adaptation", "local_agronomic_review", "soil_temperature_rule", "seasonal_window", "frost_rule", "soil_workability"]
+    },
+    {
+      "crop_id": "barley",
+      "crop_type": "spring barley",
+      "region": "US-KS",
+      "verified_at": "2026-11-14",
+      "source_url": "https://bookstore.ksre.ksu.edu/pubs/kansas-crop-planting-guide_L818.pdf",
+      "status": "partial_regional_caution",
+      "measurement_depth_cm": null,
+      "threshold_temperature_C": null,
+      "threshold_temperature_range_C": null,
+      "requires_warming_trend": null,
+      "seasonal_window": null,
+      "regional_caution": "Guide includes regional not-recommended conditions; zone and footnote verification required before use. Spring and winter barley are distinct.",
+      "frost_restrictions": {"numeric_threshold_C": null, "rule": null},
+      "soil_workability_rule": {"availability": "not_verified", "rule": null},
+      "blockers": ["verify_local_adaptation_and_zone", "soil_temperature_rule", "seasonal_window", "frost_rule", "soil_workability"]
+    },
+    {
+      "crop_id": "oats",
+      "crop_type": "spring oats",
+      "region": "US-KS",
+      "verified_at": "2026-11-14",
+      "source_url": "https://bookstore.ksre.ksu.edu/pubs/kansas-crop-planting-guide_L818.pdf",
+      "status": "partial_calendar_only",
+      "measurement_depth_cm": null,
+      "threshold_temperature_C": null,
+      "threshold_temperature_range_C": null,
+      "requires_warming_trend": null,
+      "seasonal_window": {
+        "source_id": "kansas_planting_guide",
+        "zone_assignment_required": true,
+        "windows_by_zone": {
+          "1": [{"start": "03-05", "end": "03-20"}],
+          "2": [{"start": "02-25", "end": "03-15"}],
+          "3": [{"start": "02-25", "end": "03-15"}],
+          "4": [{"start": "02-20", "end": "03-15"}]
+        }
+      },
+      "frost_restrictions": {"numeric_threshold_C": null, "rule": null},
+      "soil_workability_rule": {"availability": "not_verified", "rule": null},
+      "blockers": ["planting_zone_geometry", "soil_temperature_rule", "frost_rule", "soil_workability", "crop_purpose_grain_or_forage"]
+    }
+  ]
+}

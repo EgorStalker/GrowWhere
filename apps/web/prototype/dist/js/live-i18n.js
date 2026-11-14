@@ -5,6 +5,12 @@ export const copy = {
   stepNames:['Вітання','Культура','Полив і умови','Карта й територія'],
   cropNames:{wheat:'Яра пшениця',soy:'Соя',corn:'Кукурудза',sorghum:'Сорго',barley:'Ярий ячмінь',oats:'Овес',cotton:'Бавовник'},
   cropDefaults:{wheat:'03-15',soy:'05-01',corn:'05-01',sorghum:'05-15',barley:'03-15',oats:'03-15',cotton:'04-20'},
+  planningReadiness:{
+    title:'Доступна історична оцінка, а не план майбутніх робіт',
+    sowing:'Дата майбутньої сівби: недостатньо даних.',
+    irrigation:'Рекомендована кількість поливу: недостатньо даних.',
+    reason:'Для рекомендацій потрібен повний набір перевірених даних: прогноз, поточна температура й волога ґрунту та місцеві агрономічні правила. Історичний календар не є рекомендацією для нового сезону.'
+  },
   cropNotes:{
     wheat:{season:'135 дн.',temp:'12–24 °C',note:'Рання сівба; чутлива до тривалої спеки > 35 °C.'},
     soy:{season:'140 дн.',temp:'20–30 °C',note:'Теплолюбна олійна й бобова культура для весняно-літнього сезону.'},
@@ -33,4 +39,58 @@ export const fmt = (number,digits=0) => Number.isFinite(Number(number)) && numbe
 export function dateTime(value) {
   if(!value || Number.isNaN(Date.parse(value))) return 'Ще не отримано';
   return new Intl.DateTimeFormat(locale,{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value));
+}
+
+// Presentation guards shared with the form. These preserve the distinction
+// between a historical scenario and an evidence-backed future recommendation.
+export function historicalScenarioDate(crop, year, asOfYear=new Date().getUTCFullYear()) {
+  const numericYear=Number(year);
+  if(typeof year==='boolean'||!Number.isInteger(numericYear)||numericYear<1984||numericYear>asOfYear||!copy.cropDefaults[crop])return null;
+  return `${numericYear}-${copy.cropDefaults[crop]}`;
+}
+
+export function irrigationInputState(mode, value) {
+  const supplied=value!==null&&value!==undefined&&String(value).trim()!=='';
+  const amount=Number(value);
+  const valid=mode!=='yes'||!supplied||(Number.isFinite(amount)&&amount>=0&&amount<=5000);
+  return {
+    valid,
+    amountMm:valid&&mode==='yes'&&supplied?amount:0,
+    known:valid&&(mode==='no'||(mode==='yes'&&supplied)),
+    source:mode==='no'?'rainfed':mode==='yes'&&supplied&&valid?'user':'unknown'
+  };
+}
+
+export function forecastOverview(forecast, now=Date.now()) {
+  if(forecast?.available!==true||!forecast.data)return null;
+  const periods=(forecast.data.periods||[]).filter(period=>
+    Number.isFinite(Date.parse(period.start))&&Number.isFinite(Date.parse(period.end))&&
+    Date.parse(period.end)>now&&Date.parse(period.start)<now+24*60*60*1000
+  );
+  if(!periods.length)return null;
+  const temperatures=periods.map(period=>period.air_temperature_c).filter(value=>typeof value==='number'&&Number.isFinite(value));
+  const rainProbabilities=periods.map(period=>period.precipitation_probability_pct).filter(value=>typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=100);
+  return {
+    periodCount:periods.length,
+    temperatureRangeC:temperatures.length?[Math.min(...temperatures),Math.max(...temperatures)]:null,
+    maxRainProbabilityPct:rainProbabilities.length?Math.max(...rainProbabilities):null,
+    issuedAt:forecast.data.issued_at,
+    validTo:forecast.data.valid_to
+  };
+}
+
+export function agronomicRuleOverview(registry) {
+  const rule=registry?.rule;
+  if(!rule)return null;
+  const numeric=value=>typeof value==='number'&&Number.isFinite(value);
+  const range=rule.threshold_temperature_range_C;
+  const temperatureRangeC=Array.isArray(range)&&range.length===2&&range.every(numeric)&&range[0]<=range[1]
+    ?range:numeric(rule.threshold_temperature_C)?[rule.threshold_temperature_C,rule.threshold_temperature_C]:null;
+  return {
+    temperatureRangeC,
+    depthCm:numeric(rule.measurement_depth_cm)?rule.measurement_depth_cm:null,
+    localGuideDiscouragesCrop:registry.blockers?.includes('crop_not_recommended_by_local_guide')||false,
+    sourceUrl:rule.source_url,
+    verifiedAt:registry.verified_at||rule.verified_at||null
+  };
 }

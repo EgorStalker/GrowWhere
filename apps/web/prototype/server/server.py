@@ -11,6 +11,9 @@ PROJECT=Path(__file__).resolve().parents[4]
 sys.path.insert(0,str(PROJECT/'data/pipelines'))
 from growwhere.service import analyze,source_status
 from growwhere.insights import analyze_point_insights
+from growwhere.planning import planning_readiness
+from growwhere.forecast import nws_forecast,forecast_evidence
+from growwhere.agronomy import assess_agronomic_readiness
 from growwhere.sources import utcnow
 
 STATIC=Path(__file__).resolve().parents[1]/'dist'
@@ -42,6 +45,23 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             if parsed.path=='/api/health': return self.json(200,{'status':'ok','time':utcnow()})
             if parsed.path=='/api/sources': return self.json(200,source_status())
+            if parsed.path=='/api/planning-readiness':
+                bbox=get('bbox')
+                value=planning_readiness(mode=get('mode','own_land'),crop=get('crop'),
+                    lon=get('lon'),lat=get('lat'),
+                    bbox=[float(v) for v in bbox.split(',')] if bbox is not None else None,
+                    target_year=get('target_year'),scale_ha=get('scale_ha'))
+                if value['coverage']['status']=='supported' and get('lon') is not None:
+                    forecast=nws_forecast(get('lon'),get('lat'),refresh=get('refresh','0')=='1')
+                    value=planning_readiness(mode=get('mode','own_land'),crop=get('crop'),
+                        lon=get('lon'),lat=get('lat'),target_year=get('target_year'),scale_ha=get('scale_ha'),
+                        evidence={'validated_weather_forecast':forecast_evidence(forecast,get('target_year'))})
+                    value['forecast']=forecast
+                else:
+                    value['forecast']={'available':False,'data':None,'status':'point_required' if value['coverage']['status']=='supported' else 'outside_or_missing_coverage',
+                        'reason':'Для погодного прогнозу оберіть точку в пілотній області Канзасу.','provenance':[]}
+                value['agronomic_rules']=assess_agronomic_readiness(get('crop')) if get('crop') else None
+                return self.json(200,value)
             if parsed.path=='/api/analysis':
                 value=analyze([float(v) for v in get('bbox','-99,38,-97,39').split(',')],float(get('zoom','7')),get('crop','wheat'),int(get('year',str(dt.datetime.now().year-1))),get('planting','2025-05-01'),float(get('irrigation_mm','0')),get('irrigation_known','true')=='true',get('refresh','0')=='1')
                 return self.json(200,value)

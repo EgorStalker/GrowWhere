@@ -1,4 +1,4 @@
-import {copy,tr,fmt,dateTime} from './live-i18n.js';
+import {copy,tr,fmt,dateTime,historicalScenarioDate,irrigationInputState,forecastOverview,agronomicRuleOverview} from './live-i18n.js';
 import {initMap,getView,setAnalysis,clearAnalysis,selectFeature,clearSelectedFeature,featureName,focusKansas,focusDetail,showWorld,resizeMap,startAreaSelection,undoLastPolygonPoint,finishPolygonSelection,cancelAreaSelection,clearCustomArea,selectCurrentViewArea,setAreaDisplayMode,fitCustomArea,setBaseLayer,setOverlayOpacity,setSignalLayer,STATUS_COLORS} from './live-map.js';
 import {aggregateTerritory,recommendedZoomForArea} from './area-selection.js';
 
@@ -49,6 +49,8 @@ const state={
 
 const analysisCache=new Map();
 const insightsCache=new Map();
+const planningCache=new Map();
+let planningLoadingKey=null,planningErrorKey=null,planningController=null,planningRequestId=0;
 const root=document.getElementById('app');
 const dialog=document.getElementById('dialog');
 let controller=null,insightsController=null,requestId=0,insightsReqId=0,moveTimer=null,dialogTrigger=null;
@@ -63,6 +65,10 @@ const economyKey=(crop,year=state.year)=>`${crop}:${year}`;
 const economy=crop=>state.economics[economyKey(crop)]||null;
 const sourceReceived=id=>state.selected?.properties?.source_meta?.find(meta=>meta.source_id===id)?.retrieved_at;
 const unit=(value,label,digits=0)=>validNumber(value)?`${fmt(value,digits)} <small>${label}</small>`:'Без даних';
+const waterScenarioLabel=()=>{
+  const water=irrigationInputState(state.irrigation,state.water);
+  return state.irrigation==='yes'?(water.known?`ваш сценарій: ${fmt(water.amountMm)} мм`:'кількість поливу не визначено'):tr(`irrigationNames.${state.irrigation}`,'Полив не визначено');
+};
 
 function formatArea(ha) {
   if(!validNumber(ha)||Number(ha)<=0)return '—';
@@ -226,11 +232,11 @@ function renderMapTopbar() {
       </select>
     </div>
     <div class="topbar-group">
-      <label for="year-select">Рік</label>
+      <label for="year-select">Рік історичних даних</label>
       <select id="year-select">${[currentYear,currentYear-1,currentYear-2,currentYear-3].map(year=>`<option value="${year}" ${year===state.year?'selected':''}>${year}</option>`).join('')}</select>
     </div>
     <div class="topbar-group">
-      <label for="planting-date">Сівба</label>
+      <label for="planting-date">Початок історичного розрахунку</label>
       <input type="date" id="planting-date" min="${state.year}-01-01" max="${state.year}-12-31" value="${state.planting}">
     </div>
     <div class="topbar-group topbar-water">
@@ -241,10 +247,10 @@ function renderMapTopbar() {
         <button type="button" class="${state.irrigation==='unknown'?'active':''}" id="water-unknown" data-action="water" data-value="unknown">Невідомо</button>
       </div>
       <div id="topbar-mm-wrap" class="topbar-mm-wrap" ${irrYes?'':'hidden'}>
-        <input id="irrigation-mm" name="irrigation_mm" type="number" min="0" max="5000" step="25" inputmode="decimal" value="${escape(state.water)}" placeholder="мм" aria-label="Полив у мм">
+        <input id="irrigation-mm" name="irrigation_mm" type="number" min="0" max="5000" step="25" inputmode="decimal" value="${escape(state.water)}" placeholder="Не визначено" aria-label="Ваш сценарій поливу у мм">
         <span class="mm-unit">мм</span>
-        <button type="button" class="mini-preset ${Number(state.water)===200?'active':''}" data-action="water-preset" data-mm="200">200</button>
-        <button type="button" class="mini-preset ${Number(state.water)===400?'active':''}" data-action="water-preset" data-mm="400">400</button>
+        <button type="button" class="mini-preset ${Number(state.water)===200?'active':''}" data-action="water-preset" data-mm="200" title="Приклад сценарію, не рекомендація">200</button>
+        <button type="button" class="mini-preset ${Number(state.water)===400?'active':''}" data-action="water-preset" data-mm="400" title="Приклад сценарію, не рекомендація">400</button>
       </div>
     </div>
     <div class="topbar-actions">
@@ -266,6 +272,10 @@ function renderMapTopbar() {
   `;
 }
 
+function planningReadinessHtml() {
+  return `<aside class="planning-readiness" aria-label="Готовність рекомендацій"><strong>${copy.planningReadiness.title}</strong><ul><li>${copy.planningReadiness.sowing}</li><li>${copy.planningReadiness.irrigation}</li></ul><p>${copy.planningReadiness.reason}</p></aside>`;
+}
+
 function irrigationFields() {
   return `
     <div class="live-field">
@@ -277,12 +287,13 @@ function irrigationFields() {
       </fieldset>
       ${state.irrigation==='yes'?`
         <div class="water-controls">
-          <label for="irrigation-mm">Скільки води додасте за сезон (мм)?</label>
-          <div class="water-presets" role="group" aria-label="Швидкий вибір поливу">
+          <label for="irrigation-mm">Ваш сценарій додаткового поливу, мм (необов’язково)</label>
+          <small>Приклади обсягів для порівняння — не рекомендація поливу:</small>
+          <div class="water-presets" role="group" aria-label="Приклади обсягів для порівняння, не рекомендація">
             ${WATER_PRESETS.map(mm=>`<button type="button" class="preset-chip ${Number(state.water)===mm?'active':''}" data-action="water-preset" data-mm="${mm}">${mm} мм</button>`).join('')}
           </div>
-          <input id="irrigation-mm" name="irrigation_mm" type="number" min="0" max="5000" step="10" inputmode="decimal" value="${escape(state.water)}" placeholder="Наприклад, 250" aria-invalid="${!!state.validationError}" aria-describedby="water-hint water-validation">
-          <small id="water-hint">1 мм = 10 м³/га. Полив збільшує водний баланс: (0.8×опади + полив) / потреба FAO-56.</small>
+          <input id="irrigation-mm" name="irrigation_mm" type="number" min="0" max="5000" step="10" inputmode="decimal" value="${escape(state.water)}" placeholder="Ще не визначено" aria-invalid="${!!state.validationError}" aria-describedby="water-hint water-validation">
+          <small id="water-hint">1 мм = 10 м³/га. Це заданий вами сценарій, а не рекомендований полив. Без кількості показуємо історичну оцінку без підтвердженої додаткової води.</small>
           <p id="water-validation" class="live-input-error" role="alert" ${state.validationError?'':'hidden'}>${escape(state.validationError||'')}</p>
         </div>
       `:`<small>${state.irrigation==='unknown'?'Поки полив не підтверджено, у розрахунку враховуються лише природні опади.':state.irrigation==='no'?'Розрахунок враховує лише 80% сезонних опадів.':'Оберіть один із трьох варіантів, щоб модель точно знала умови зрошення.'}</small>`}
@@ -341,8 +352,8 @@ function welcomeScreen() {
         </article>
         <article class="step-preview">
           <span class="step-num">02</span>
-          <h2>Вкажіть полив і сівбу</h2>
-          <p>Задайте зрошення в мм, рік і дату сівби — оцінка одразу врахує компенсацію водного дефіциту.</p>
+          <h2>Порівняйте історичні умови</h2>
+          <p>Оберіть минулий сезон і власний сценарій поливу. Дата майбутньої посадки та норма поливу поки недоступні.</p>
         </article>
         <article class="step-preview">
           <span class="step-num">03</span>
@@ -362,15 +373,16 @@ function cropScreen() {
           <button type="button" class="link-button" data-action="home">← Назад до вітання</button>
           <p class="eyebrow">КРОК 2 · ВИБІР КУЛЬТУРИ</p>
           <h1 class="live-step-heading" id="page-title" tabindex="-1">Яку культуру ви плануєте вирощувати?</h1>
-          <p class="lead">Оберіть одну з ${CROP_IDS.length} культур. Кожна має власну рекомендовану дату сівби, тепловий поріг та потребу у воді.</p>
+          <p class="lead">Оберіть одну з ${CROP_IDS.length} культур для порівняння історичних умов. Теплові пороги та потреба у воді належать до дослідницької моделі.</p>
         </div>
         <div class="wizard-head-actions">
           <button type="button" class="secondary" data-action="compare">Порівняти економіку</button>
         </div>
       </div>
+      ${planningReadinessHtml()}
       <div class="wizard-crop-grid">${CROP_IDS.map(crop=>cropCard(crop)).join('')}</div>
       <div class="wizard-footer-bar">
-        <div class="wizard-chosen">${state.crop?`Обрано: <strong>${cropName(state.crop)}</strong> · рекомендована сівба <code>${state.planting}</code>`:'Оберіть одну культуру зі списку вище, щоб перейти до налаштування поливу.'}</div>
+        <div class="wizard-chosen">${state.crop?`Обрано: <strong>${cropName(state.crop)}</strong>`:'Оберіть одну культуру зі списку вище, щоб перейти до налаштування поливу.'}</div>
         <button type="button" class="primary wizard-next" data-action="go-conditions" ${state.crop?'':'disabled'}><span>Далі: полив та умови</span>${icon('arrow')}</button>
       </div>
     </section>
@@ -378,14 +390,14 @@ function cropScreen() {
 }
 
 function irrigationScreen() {
-  const recPlanting=state.crop?`${state.year}-${copy.cropDefaults[state.crop]}`:`${state.year}-05-01`;
-  const ready=!!(state.crop&&state.irrigation&&!state.validationError&&(state.irrigation!=='yes'||validNumber(state.water)));
+  const ready=!!(state.crop&&state.irrigation&&!state.validationError&&irrigationInputState(state.irrigation,state.water).valid);
   return `
     <section class="wizard-stage narrow" aria-labelledby="page-title">
       <button type="button" class="link-button" data-action="go-crops">← Змінити культуру (${cropName(state.crop)})</button>
       <p class="eyebrow">КРОК 3 · ПОЛИВ ТА СЕЗОН</p>
-      <h1 class="live-step-heading" id="page-title" tabindex="-1">Налаштуйте полив і параметри сезону</h1>
-      <p class="lead">Оберіть режим поливу й перевірте дату сівби. Після підтвердження відкриється карта для виділення ділянки по точках.</p>
+      <h1 class="live-step-heading" id="page-title" tabindex="-1">Умови історичного порівняння</h1>
+      <p class="lead">Оберіть режим поливу та період спостережень. Ці налаштування допомагають повторити історичний розрахунок і не є планом посадки.</p>
+      ${planningReadinessHtml()}
       <div class="wizard-card">
         <div class="live-form">
           <div class="live-inline-fields">
@@ -399,14 +411,14 @@ function irrigationScreen() {
             </div>
           </div>
           <div class="live-field">
-            <label for="planting-date">Дата сівби</label>
+            <label for="planting-date">Період історичного розрахунку — початок</label>
             <input type="date" id="planting-date" min="${state.year}-01-01" max="${state.year}-12-31" value="${state.planting}">
-            <small>Рекомендована дата для «${cropName(state.crop)}»: ${recPlanting}.</small>
+            <small>Це параметр моделі для обраного року, а не рекомендація майбутньої сівби. Актуальної дати посадки сервіс поки не визначає.</small>
           </div>
           ${irrigationFields()}
         </div>
         <div class="wizard-footer-bar">
-          <div class="wizard-chosen">${state.irrigation?`${cropName(state.crop)} · ${state.planting} · ${state.irrigation==='yes'?`полив ${fmt(state.water||0)} мм`:tr(`irrigationNames.${state.irrigation}`)}`:'Спочатку оберіть режим поливу вище («Без поливу», «Полив доступний» або «Ще не знаю»).'}</div>
+          <div class="wizard-chosen">${state.irrigation?`${cropName(state.crop)} · історичні дані ${state.year} · ${waterScenarioLabel()}`:'Спочатку оберіть режим поливу вище («Без поливу», «Полив доступний» або «Ще не знаю»).'}</div>
           <button type="button" class="primary wizard-next" data-action="go-map" ${ready?'':'disabled'}><span>Відкрити карту</span>${icon('arrow')}</button>
         </div>
       </div>
@@ -437,7 +449,7 @@ function waterBalanceHtml(wb) {
   return `
     <div class="water-balance-box">
       <div><span>Опади (×0.8)</span><b>${fmt(wb.effective_rain_mm,0)} мм</b></div>
-      <div><span>Полив</span><b>+${fmt(wb.irrigation_mm,0)} мм</b></div>
+      <div><span>Полив у сценарії</span><b>${irrigationInputState(state.irrigation,state.water).known?`+${fmt(wb.irrigation_mm,0)} мм`:'Не визначено'}</b></div>
       <div><span>Потреба ETc</span><b>${fmt(wb.demand_mm,0)} мм</b></div>
       <div><span>${gap>0?'Дефіцит':'Запас'}</span><b>${gap>0?`-${fmt(gap,0)} мм`:`+${fmt(supply-wb.demand_mm,0)} мм`}</b></div>
     </div>
@@ -468,6 +480,50 @@ function insightKey(target) {
   if(!target)return '';
   const cond=conditions();
   return `${target.lon.toFixed(4)},${target.lat.toFixed(4)}|${cond.crop}|${cond.year}|${cond.planting}|${cond.irrigation_mm}|${cond.irrigation_known}`;
+}
+
+function planningKey(target) {
+  return target?`${Number(target.lon).toFixed(5)},${Number(target.lat).toFixed(5)}|${state.crop}`:'';
+}
+
+async function loadPlanningReadiness(refresh=false) {
+  const target=activeInsightTarget();
+  if(!target||!state.crop)return;
+  const key=planningKey(target);
+  const cached=planningCache.get(key);
+  if(!refresh&&cached&&Date.now()-cached.fetchedAt<10*60*1000)return;
+  if(!refresh&&planningLoadingKey===key)return;
+  planningController?.abort();
+  planningController=new AbortController();
+  const identity=++planningRequestId;
+  planningLoadingKey=key;planningErrorKey=null;
+  renderDrawer();
+  const params=new URLSearchParams({mode:'own_land',crop:state.crop,lon:String(target.lon),lat:String(target.lat),refresh:refresh?'1':'0'});
+  try{
+    const response=await fetch(`/api/planning-readiness?${params}`,{signal:planningController.signal});
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||`HTTP ${response.status}`);
+    if(identity!==planningRequestId)return;
+    planningCache.set(key,{data,fetchedAt:Date.now()});
+    planningLoadingKey=null;
+  }catch(error){
+    if(error.name==='AbortError'||identity!==planningRequestId)return;
+    planningLoadingKey=null;planningErrorKey=key;
+  }
+  if(state.step===4&&state.drawerOpen)renderDrawer();
+}
+
+function pointPlanningHtml() {
+  const key=planningKey(activeInsightTarget());
+  if(!key)return '';
+  const data=planningCache.get(key)?.data;
+  if(!data)return `<section class="drawer-sub planning-point"><strong>Актуальні умови для планування</strong><span>${planningLoadingKey===key?'Отримуємо прогноз і перевіряємо наявність правил…':planningErrorKey===key?'Прогноз і правила зараз недоступні. Дату посадки й норму поливу не визначено.':'Дату посадки й норму поливу поки не визначено.'}</span>${planningErrorKey===key?button('Оновити прогноз','reload-planning'):''}</section>`;
+  const forecast=forecastOverview(data.forecast);
+  const forecastSources=(data.forecast?.provenance||[]).map(meta=>sourceLink(meta.source_url,'Джерело NOAA/NWS')).join(' ');
+  const forecastHtml=forecast?`<span><b>NOAA/NWS · найближчі 24 години</b><br>Температура повітря: ${formatRange(forecast.temperatureRangeC,' °C',1)}<br>Найбільша погодинна ймовірність опадів: ${forecast.maxRainProbabilityPct===null?'Без даних':`${fmt(forecast.maxRainProbabilityPct)}%`}<br>Випущено: ${dateTime(forecast.issuedAt)}<br>Прогноз діє до: ${dateTime(forecast.validTo)}<br>Дати й час показано в часовому поясі вашого пристрою.</span>${forecastSources}`:`<span>Актуальний прогноз: ${escape(data.forecast?.reason||'Без даних для цієї точки.')}</span>`;
+  const rule=agronomicRuleOverview(data.agronomic_rules);
+  const ruleHtml=rule?`<span><b>Місцеві правила · ${cropName(state.crop)}</b><br>${rule.localGuideDiscouragesCrop?'Місцевий посібник не рекомендує цей тип культури для регіону.<br>':''}${rule.temperatureRangeC?`Опублікований мінімум температури ґрунту: ${formatRange(rule.temperatureRangeC,' °C',1)}${rule.depthCm===null?'':` на глибині ${fmt(rule.depthCm,2)} см`}. Це довідковий поріг, а не вимірювання поточного стану ґрунту.`:'Перевіреного температурного порогу для автоматичної оцінки немає.'}${rule.verifiedAt?`<br>Джерело перевірено: ${escape(rule.verifiedAt)}`:''}</span>${sourceLink(rule.sourceUrl,'Правила K-State')}`:'<span>Місцеві агрономічні правила: без даних.</span>';
+  return `<section class="drawer-sub planning-point"><strong>Актуальні умови для планування</strong><span>${state.selected?'Прогноз для центра вибраної зони.':'Прогноз лише для центральної точки контуру.'} Це оцінка погодної сітки, а не вимірювання на полі.</span>${forecastHtml}${ruleHtml}<span>Дата посадки та норма поливу поки не визначені. Прогноз і правила самі по собі не є порадою для цього поля.</span>${data.critical_gaps?.length?`<details><summary>Чого ще бракує (${data.critical_gaps.length})</summary><ul class="live-missing-list">${data.critical_gaps.map(gap=>`<li>${escape(gap.message)}</li>`).join('')}</ul></details>`:''}${button('Оновити перевірку','reload-planning')}</section>`;
 }
 
 async function loadPointInsights(refresh=false) {
@@ -516,11 +572,11 @@ function uncertaintyBoxHtml(uncertainty) {
   if(!uncertainty)return '';
   const range=uncertainty.score_range?`${fmt(uncertainty.score_range[0],0)}–${fmt(uncertainty.score_range[1],0)}`:'—';
   const agPct=validNumber(uncertainty.ag_share)?`${Math.round(uncertainty.ag_share*100)}%`:'—';
-  return `<div class="drawer-sub uncertainty-box"><strong>Невизначеність оглядової сітки (${fmt(uncertainty.sample_count)} точок)</strong><span>Розкид балів: <b>${range}</b> · с/г покрив (CDL): <b>${agPct}</b> (${fmt(uncertainty.scored_samples)} оцінено, ${fmt(uncertainty.excluded_samples)} поза аналізом)</span></div>`;
+  return `<div class="drawer-sub uncertainty-box"><strong>Невизначеність оглядової сітки (${fmt(uncertainty.sample_count)} точок)</strong><span>Розкид балів: <b>${range}</b> · с/г покрив у вибірці (CDL): <b>${agPct}</b> (${fmt(uncertainty.scored_samples)} оцінено, ${fmt(uncertainty.excluded_samples)} поза аналізом, ${fmt(uncertainty.unknown_samples)} без даних)</span></div>`;
 }
 
 function scalesContextHtml() {
-  return `<div class="drawer-sub scale-box"><strong>Різні масштаби спостережень (NASA · USDA)</strong><span>POWER ~55 км · SMAP ~9 км · MODIS NDVI 250–500 м · SSURGO контур · CDL 30 м</span></div>`;
+  return `<div class="drawer-sub scale-box"><strong>Різні масштаби спостережень (NASA · USDA)</strong><span>POWER ~55 км · SMAP ~9 км · MODIS NDVI 250–500 м · SSURGO контур · CDL 10–30 м залежно від року</span></div>`;
 }
 
 function compareTabHtml(data) {
@@ -676,7 +732,7 @@ function renderDrawer() {
     drawer.innerHTML=`
       <div class="drawer-head">
         <div>
-          <span class="drawer-kicker">${cropName(state.crop)} · ${state.irrigation==='yes'?`полив ${fmt(state.water||0)} мм`:tr(`irrigationNames.${state.irrigation}`)}</span>
+          <span class="drawer-kicker">${cropName(state.crop)} · ${waterScenarioLabel()}</span>
           <h2>${escape(featureName(feature))}</h2>
         </div>
         <button type="button" class="drawer-close" data-action="close-drawer" aria-label="Сховати панель">×</button>
@@ -685,6 +741,7 @@ function renderDrawer() {
       ${drawerTabsHtml()}
       <div class="live-status-row">${statusPill(status)}<span class="live-score">${validNumber(result?.score)?`${fmt(result.score)} <small>/ 100</small>`:''}</span></div>
       <p class="drawer-note">${tr(`statusInfo.${status}`)}</p>
+      ${pointPlanningHtml()}
       ${uncertaintyBoxHtml(result?.uncertainty)}
       ${factorBarsHtml(result?.factors,result?.limiting_factor)}
       ${waterBalanceHtml(result?.water_balance)}
@@ -708,7 +765,7 @@ function renderDrawer() {
   drawer.innerHTML=`
     <div class="drawer-head">
       <div>
-        <span class="drawer-kicker">${cropName(state.crop)} · ${state.irrigation==='yes'?`полив ${fmt(state.water||0)} мм`:tr(`irrigationNames.${state.irrigation}`)}</span>
+        <span class="drawer-kicker">${cropName(state.crop)} · ${waterScenarioLabel()}</span>
         <h2>Виділена територія</h2>
       </div>
       <button type="button" class="drawer-close" data-action="close-drawer" aria-label="Сховати панель">×</button>
@@ -719,6 +776,7 @@ function renderDrawer() {
       <span class="live-score">${validNumber(summary.score)?`${fmt(summary.score)} <small>/ 100</small>`:''}</span>
     </div>
     ${areaBreakdownHtml(summary)}
+    ${pointPlanningHtml()}
     ${factorBarsHtml(summary.avgFactors)}
     ${waterBalanceHtml(summary.avgWaterBalance)}
     <dl class="live-facts">
@@ -888,13 +946,13 @@ function validateWater() {
 }
 
 function conditions() {
-  const amount=state.irrigation==='yes'&&validNumber(state.water)?Number(state.water):0;
+  const water=irrigationInputState(state.irrigation,state.water);
   return {
     crop:state.crop,
     year:String(state.year),
     planting:state.planting,
-    irrigation_mm:String(amount),
-    irrigation_known:String(state.irrigation==='no'||(state.irrigation==='yes'&&state.water!==''))
+    irrigation_mm:String(water.amountMm),
+    irrigation_known:String(water.known)
   };
 }
 
@@ -912,6 +970,7 @@ function applyAnalysisData(data) {
     if(match&&(!state.areaSummary||state.areaSummary.intersectingIds.has(String(selectedId))))selectFeature(String(selectedId));
   }
   updateMapText();
+  if(state.drawerOpen)loadPlanningReadiness(false);
   if(state.drawerOpen&&state.drawerTab!=='overview')loadPointInsights(false);
 }
 
@@ -1032,6 +1091,7 @@ function selectZone(feature) {
   state.selected=feature;
   state.drawerOpen=true;
   if(state.step!==4)setStep(4);else updateMapText();
+  loadPlanningReadiness(false);
   if(state.drawerTab!=='overview')loadPointInsights(false);
   announce(`${featureName(feature)}. ${tr('statuses.'+(feature.properties?.result?.status||'unknown'))}`);
 }
@@ -1081,8 +1141,8 @@ function removeCustomArea() {
 
 function setCrop(newCrop) {
   state.crop=newCrop;
-  if(!state.plantingManual&&copy.cropDefaults[newCrop]){
-    state.planting=`${state.year}-${copy.cropDefaults[newCrop]}`;
+  if(!state.plantingManual&&historicalScenarioDate(newCrop,state.year)){
+    state.planting=historicalScenarioDate(newCrop,state.year);
   }
 }
 
@@ -1097,10 +1157,10 @@ function renderDialog(type,show=true) {
   let title='',content='';
   if(type==='help') {
     title='Як працює GrowWhere';
-    content=`<p class="live-dialog-text">Послідовність роботи:</p><div class="help-list">${[['1. Культура',`Оберіть одну з ${CROP_IDS.length} культур.`],['2. Полив і сезон','Вкажіть рік, дату сівби та полив у мм (наприклад, 200 або 400 мм).'],['3. Повноекранна карта','Натисніть «Виділити по точках», поставте точки межі поля й замкніть контур — уся територія покаже свій колір.']].map(([head,text],i)=>`<div class="help-item"><span class="step-num">${String(i+1).padStart(2,'0')}</span><div><h3>${head}</h3><p>${text}</p></div></div>`).join('')}</div>${button('Зрозуміло','close-dialog','primary')}`;
+    content=`<p class="live-dialog-text">Послідовність роботи:</p><div class="help-list">${[['1. Культура',`Оберіть одну з ${CROP_IDS.length} культур.`],['2. Історичний сценарій','Оберіть рік спостережень, початок історичного розрахунку та власний сценарій поливу. Актуальні дата посадки й норма поливу поки недоступні.'],['3. Повноекранна карта','Натисніть «Виділити по точках», поставте точки межі поля й замкніть контур — уся територія покаже свій колір.']].map(([head,text],i)=>`<div class="help-item"><span class="step-num">${String(i+1).padStart(2,'0')}</span><div><h3>${head}</h3><p>${text}</p></div></div>`).join('')}</div>${button('Зрозуміло','close-dialog','primary')}`;
   }else if(type==='compare') {
     title='Порівняння культур (USDA ERS)';
-    content=`<p class="live-dialog-text">Регіональні витрати та ціни за ${state.year} рік.</p><div class="live-compare-grid">${CROP_IDS.map(crop=>{const data=economy(crop);return `<article class="live-compare-item"><h3>${cropName(crop)}</h3><dl><div><dt>Витрати</dt><dd>${unit(data?.cost_per_ha,'$/га')}</dd></div><div><dt>Ціна</dt><dd>${unit(data?.price_per_tonne,'$/т')}</dd></div><div><dt>Сівба</dt><dd>${state.year}-${copy.cropDefaults[crop]}</dd></div><div><dt>Опт. температура</dt><dd>${escape(copy.cropNotes[crop]?.temp||'')}</dd></div></dl><button type="button" class="secondary" data-action="compare-crop" data-crop="${crop}">Обрати ${cropName(crop)}</button></article>`;}).join('')}</div>`;
+    content=`<p class="live-dialog-text">Регіональні витрати та ціни за ${state.year} рік.</p><div class="live-compare-grid">${CROP_IDS.map(crop=>{const data=economy(crop);return `<article class="live-compare-item"><h3>${cropName(crop)}</h3><dl><div><dt>Витрати</dt><dd>${unit(data?.cost_per_ha,'$/га')}</dd></div><div><dt>Ціна</dt><dd>${unit(data?.price_per_tonne,'$/т')}</dd></div><div><dt>Опт. температура</dt><dd>${escape(copy.cropNotes[crop]?.temp||'')}</dd></div></dl><button type="button" class="secondary" data-action="compare-crop" data-crop="${crop}">Обрати ${cropName(crop)}</button></article>`;}).join('')}</div>`;
   }else {
     title=type==='formula'?'Формула придатності та дані':'Джерела, кешування й обмеження';
     const sourceRows=state.sources?.sources||[];
@@ -1120,7 +1180,6 @@ document.addEventListener('click',event=>{
   else if(action==='go-conditions'){if(!state.crop)return;state.maxStep=Math.max(state.maxStep,3);setStep(3);}
   else if(action==='go-map'){
     if(!state.crop||!state.irrigation||!validateWater())return;
-    if(state.irrigation==='yes'&&!validNumber(state.water))return;
     state.maxStep=Math.max(state.maxStep,4);
     setStep(4);
   }
@@ -1134,7 +1193,6 @@ document.addEventListener('click',event=>{
     else{syncTopbarControls();loadAnalysis();}
   }else if(action==='water'){
     state.irrigation=target.dataset.value;
-    if(state.irrigation==='yes'&&state.water===''){state.water='250';}
     state.validationError=null;
     if(state.step===3){document.getElementById('flow-stage').innerHTML=irrigationScreen();document.getElementById(`water-${state.irrigation}`)?.focus({preventScroll:true});}
     else if(state.step===4){syncTopbarControls();if(validateWater())loadAnalysis();}
@@ -1168,6 +1226,8 @@ document.addEventListener('click',event=>{
     }
   }else if(action==='reload-insights'){
     loadPointInsights(true);
+  }else if(action==='reload-planning'){
+    loadPlanningReadiness(true);
   }else if(action==='cycle-opacity'){
     const steps=[0.42,0.72,0];
     const idx=steps.findIndex(v=>Math.abs(v-state.overlayOpacity)<0.05);
@@ -1229,9 +1289,9 @@ document.addEventListener('input',event=>{
     const valid=validateWater();
     if(state.step===3){
       const nextBtn=document.querySelector('[data-action="go-map"]');
-      if(nextBtn)nextBtn.disabled=!(valid&&validNumber(value));
+      if(nextBtn)nextBtn.disabled=!(valid&&irrigationInputState(state.irrigation,value).valid);
       const chosen=document.querySelector('.wizard-chosen');
-      if(chosen&&state.crop)chosen.textContent=`${cropName(state.crop)} · ${state.planting} · полив ${value===''?'—':fmt(value)} мм`;
+      if(chosen&&state.crop)chosen.textContent=`${cropName(state.crop)} · історичні дані ${state.year} · ${value===''?'кількість поливу не визначено':`ваш сценарій: ${fmt(value)} мм`}`;
     }else if(valid&&state.step===4)scheduleAnalysis(450);
   }
 });

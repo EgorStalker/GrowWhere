@@ -73,14 +73,19 @@ test('aggregateTerritory computes area-weighted score and status while preservin
   assert.equal(summary.scoredCount, 2);
   assert.deepEqual(summary.counts, {good: 1, conditional: 1, poor: 0, unknown: 1, excluded: 0});
   // f1 has 2x the area of f2 -> (84*2 + 60*1)/3 = 76 -> 'good'
-  assert.equal(summary.score, 76);
-  assert.equal(summary.status, 'good');
+  assert.equal(summary.score, null);
+  assert.equal(summary.status, 'unknown');
   assert.equal(summary.reason, 'partial_unknown');
   assert.deepEqual(summary.soilPhRange, [6.5, 7.1]);
   assert.deepEqual(summary.missingKeys, ['soil']);
   assert.equal(summary.avgFactors.water, 0.8);
   assert.equal(summary.avgFactors.temperature, 0.9);
   assert.equal(summary.avgWaterBalance.irrigation_mm, 100);
+
+  // The intersecting units retain their weighted score when none are unknown.
+  const completeSummary = aggregateTerritory(features.filter(f=>f.id!=='f3'), areaRing);
+  assert.equal(completeSummary.score, 76);
+  assert.equal(completeSummary.status, 'good');
 });
 
 test('aggregateTerritory returns excluded when all intersecting zones are excluded and unknown when empty', () => {

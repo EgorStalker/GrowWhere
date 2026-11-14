@@ -4,6 +4,9 @@
 
 Є каталог 24 позицій із наданого командою тексту та додаткове джерело USDA ERS.
 **Реальні відповіді POWER, SSURGO, CDL та ERS вже отримано.**
+Додано актуальний NOAA NWS hourly forecast для точки й частковий реєстр
+перевірених K-State правил. Прогноз має окрему перевірку часу випуску/дії;
+рекомендації дати й поливу ще заблоковано критичними прогалинами.
 [catalog/datasets.json](catalog/datasets.json) обліковує сирі артефакти з URL,
 параметрами, часом отримання й SHA-256. Каталог джерел не замінює цей реєстр.
 Пайплайн: `pipelines/growwhere/`; контракт API та правила оновлення — у
@@ -43,7 +46,7 @@
 Для кожного запису вкажи:
 
 - `id`, `title`, `source_ids` — унікальний ID, назва, ключі з `sources.csv` або `additional-sources.csv`; для синтетичного набору допустимий порожній список джерел.
-- `kind` — `observation`, `reanalysis`, `model_estimate`, `derived` або `synthetic`; `is_demo` — булевий прапорець демонстраційності.
+- `kind` — `observation`, `reanalysis`, `forecast`, `model_estimate`, `derived` або `synthetic`; `forecast` позначає прогноз, який потребує перевірки випуску й горизонту; `is_demo` — булевий прапорець демонстраційності.
 - `layer` — `raw`, `processed` або `samples`; `path` — локальний шлях від кореня, або `storage_uri` — місце зберігання; для зовнішнього файлу `local_available=false`.
 - `product`, `version`, `source_url`, `retrieved_at`, `verified_at` — конкретний продукт, версія, джерело й дати ISO 8601. Для похідного артефакту також `input_dataset_ids`, `pipeline`, параметри/версія обробки.
 - `license`, `license_url`, `redistribution_allowed`, `citation` — перевірені умови й атрибуція. Невідомі умови позначай `null`; це не означає дозвіл на публікацію.

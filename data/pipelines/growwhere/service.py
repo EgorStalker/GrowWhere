@@ -70,8 +70,10 @@ def _aggregate_grid_cell(feature, points, soil_samples, cover_by_id, power, crop
     cropland_cover=next((c for c in valid_covers if c.get('allow_analysis') is True),valid_covers[0] if valid_covers else None)
     clim=next((c for c in sub_climates if c and c.get('complete')),sub_climates[0] if sub_climates else None)
     uncertainty={'sample_count':len(points),'scored_samples':len(scored),'excluded_samples':counts['excluded'],
-        'unknown_samples':counts['unknown'],'ag_share':round((len(points)-counts['excluded'])/len(points),2),'counts':counts}
-    if not scored:
+        'unknown_samples':counts['unknown'],'ag_share':round(sum(c.get('allow_analysis') is True for c in sub_covers if c)/len(points),2),'counts':counts}
+    # A valid subset cannot conceal critical gaps in the remaining samples.
+    # Excluded land cover is a known class, whereas unknown is missing evidence.
+    if counts['unknown'] > 0 or not scored:
         if counts['excluded']>0 and counts['unknown']==0:
             result={'score':None,'status':'excluded','missing':[],'exclusion':'landcover_not_agricultural','landcover_gate':'sample_excluded','uncertainty':uncertainty}
         else:
@@ -214,10 +216,13 @@ def source_status():
             except (OSError,ValueError,KeyError): pass
     connected={'nasa-power':'Погода, опади, FAO-56 ET0; вологість ґрунту 0–5 см (GWETTOP) та 0–100 см (GWETROOT)','ssurgo-statsgo2':'Ґрунти 0–30 см і справжні ґрунтові полігони USDA','usda-cdl':'Покрив у точці вибірки за точний рік; 30 м роздільність','usda-ers-costs':'Регіональні витрати й історична ціна при збиранні; не поточний попит','smap':'Шар вологості кореневої зони SMAP L4 (NASA GIBS WMTS, ~9 км) на карті','landsat-modis-viirs':'Шар вегетації MODIS Terra NDVI 8-Day (NASA GIBS WMTS, 250–500 м) на карті'}
     urls={'nasa-power':'https://power.larc.nasa.gov/docs/services/api/temporal/daily/','ssurgo-statsgo2':'https://sdmdataaccess.nrcs.usda.gov/WebServiceHelp.aspx','usda-cdl':landcover.SERVICE_URL,'usda-ers-costs':'https://www.ers.usda.gov/data-products/commodity-costs-and-returns'}
+    connected['usda-cdl']='Покрив у точці за точний рік; роздільність конкретного продукту (2025: 10 м)'
+    connected['noaa-nws']='Короткостроковий погодинний прогноз для точки; повітря, не температура ґрунту; не входить до історичного індексу'
+    urls['noaa-nws']='https://www.weather.gov/documentation/services-web-api'
     for filename in ['sources.csv','additional-sources.csv']:
         path=ROOT/'data/catalog'/filename
         if not path.exists(): continue
         with path.open(encoding='utf-8',newline='') as stream:
             for row in csv.DictReader(stream):
-                sid=row['id'];statuses.append({'id':sid,'name':row['name'],'status':'connected' if sid in connected else 'not_connected','role':connected.get(sid,'Не підключено до поточної формули; значення не вигадуються.'),'updated_at':dates.get(sid),'source_url':urls.get(sid)})
+                sid=row['id'];statuses.append({'id':sid,'name':row['name'],'status':'connected' if sid in connected else row.get('status','not_connected') if sid in {'kstate-extension','kansas-mesonet'} else 'not_connected','role':connected.get(sid,row.get('role','Не підключено до поточної формули; значення не вигадуються.')),'updated_at':dates.get(sid),'source_url':urls.get(sid,row.get('source_url'))})
     return {'sources':statuses,'refresh_policy':REFRESH_POLICY,'method':METHOD_VERSION,'weights':WEIGHTS,'native_resolution':NATIVE_RESOLUTION}

@@ -30,7 +30,7 @@ class SourceCache:
         self._power_slots=threading.Semaphore(3)
         self._memory={}
 
-    def fetch(self,source_id,url,body=None,ttl=86400,refresh=False,kind='model_estimate',format='json'):
+    def fetch(self,source_id,url,body=None,ttl=86400,refresh=False,kind='model_estimate',format='json',timeout=45):
         canonical=json.dumps({'url':url,'body':body},sort_keys=True,separators=(',',':'))
         key=hashlib.sha256(canonical.encode()).hexdigest()[:24]
         with self._guard: lock=self._locks.setdefault(key,threading.Lock())
@@ -58,7 +58,7 @@ class SourceCache:
             slot=self._power_slots if source_id=='nasa-power' else threading.Semaphore(100)
             try:
                 with slot:
-                    with urllib.request.urlopen(request,timeout=45) as response:
+                    with urllib.request.urlopen(request,timeout=timeout) as response:
                         raw=response.read(24_000_001)
                         upstream_modified=response.headers.get('Last-Modified')
                 if len(raw)>24_000_000: raise UpstreamError('Source response exceeds safe request size')
@@ -110,6 +110,30 @@ class SourceCache:
             'temporal':{'start':value.get('header',{}).get('start') if is_power else None,'end':value.get('header',{}).get('end') if is_power else None,'step':'daily' if is_power else None,'timezone':value.get('header',{}).get('time_standard') if is_power else None},
             'variables':variables,'quality_notes':'Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.',
             'sha256':meta['sha256'],'request':meta['request']}
+        if source == 'noaa-nws':
+            properties = value.get('properties', {}) if isinstance(value, dict) else {}
+            periods = properties.get('periods', [])
+            entry.update({
+                'title': 'NOAA NWS point metadata / short-range weather forecast',
+                'citation': 'NOAA National Weather Service, api.weather.gov',
+                'license': 'Public domain NWS content unless otherwise noted; attribution and no implied endorsement',
+                'license_url': 'https://www.weather.gov/disclaimer',
+                'redistribution_allowed': True,
+                'spatial': {'crs': 'EPSG:4326',
+                            'coverage': 'Requested NWS forecast grid; see point metadata',
+                            'resolution': 'NWS forecast grid ~2.5 km; not a parcel measurement'},
+                'temporal': {'start': periods[0].get('startTime') if periods else None,
+                             'end': periods[-1].get('endTime') if periods else None,
+                             'step': 'See startTime/endTime per forecast period',
+                             'timezone': 'ISO 8601 offset in each forecast period',
+                             'issued_at': properties.get('updateTime')},
+                'variables': [{'name': 'temperature', 'definition': 'Forecast air temperature; not soil temperature',
+                               'unit': 'temperatureUnit per period', 'nodata': None},
+                              {'name': 'probabilityOfPrecipitation', 'definition': 'Precipitation probability; not rainfall amount',
+                               'unit': '%', 'nodata': None}],
+                'quality_notes': 'Short-range forecast, not observation or historical reanalysis. '
+                                 'Validate issue time and remaining horizon before use. Point metadata has no forecast values.',
+            })
         with self._catalog_lock:
             catalog=json.loads(CATALOG.read_text(encoding='utf-8')) if CATALOG.exists() else {'schema_version':'1.0','datasets':[]}
             catalog['datasets']=[old for old in catalog['datasets'] if old['id']!=entry['id']]+[entry]

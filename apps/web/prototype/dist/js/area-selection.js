@@ -201,13 +201,16 @@ export function aggregateTerritory(features, areaRing) {
   } else if (counts.excluded === totalCount) {
     status = 'excluded';
     reason = 'all_excluded';
+  } else if (counts.unknown > 0) {
+    status = 'unknown';
+    reason = 'partial_unknown';
   } else if (scoredCount === 0) {
     status = 'unknown';
     reason = 'no_scored';
   } else {
     score = Math.round(weightedScoreSum / weightSum);
     status = score >= 70 ? 'good' : score >= 40 ? 'conditional' : 'poor';
-    reason = counts.unknown > 0 ? 'partial_unknown' : 'scored';
+    reason = 'scored';
   }
 
   return {

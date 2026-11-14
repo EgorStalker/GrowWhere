@@ -42277,6 +42277,3264 @@
         "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.3125&latitude=37.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
         "body": null
       }
+    },
+    {
+      "id": "noaa-nws-f4562ec7522d8184c3b35171",
+      "title": "NOAA NWS point metadata / short-range weather forecast",
+      "source_ids": [
+        "noaa-nws"
+      ],
+      "kind": "forecast",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/noaa-nws/f4562ec7522d8184c3b35171-2026-11-14T211256_0000-8388ad398981.json",
+      "local_available": true,
+      "product": "noaa-nws",
+      "version": null,
+      "source_url": "https://api.weather.gov/points/38.5000,-97.5000",
+      "retrieved_at": "2026-11-14T21:12:56+00:00",
+      "verified_at": "2026-11-14T21:12:56+00:00",
+      "license": "Public domain NWS content unless otherwise noted; attribution and no implied endorsement",
+      "license_url": "https://www.weather.gov/disclaimer",
+      "redistribution_allowed": true,
+      "citation": "NOAA National Weather Service, api.weather.gov",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Requested NWS forecast grid; see point metadata",
+        "resolution": "NWS forecast grid ~2.5 km; not a parcel measurement"
+      },
+      "temporal": {
+        "start": null,
+        "end": null,
+        "step": "See startTime/endTime per forecast period",
+        "timezone": "ISO 8601 offset in each forecast period",
+        "issued_at": null
+      },
+      "variables": [
+        {
+          "name": "temperature",
+          "definition": "Forecast air temperature; not soil temperature",
+          "unit": "temperatureUnit per period",
+          "nodata": null
+        },
+        {
+          "name": "probabilityOfPrecipitation",
+          "definition": "Precipitation probability; not rainfall amount",
+          "unit": "%",
+          "nodata": null
+        }
+      ],
+      "quality_notes": "Short-range forecast, not observation or historical reanalysis. Validate issue time and remaining horizon before use. Point metadata has no forecast values.",
+      "sha256": "8388ad39898194c7422dc8701fd66ba50289ddef463c4531e3a89d290489a5dc",
+      "request": {
+        "url": "https://api.weather.gov/points/38.5000,-97.5000",
+        "body": null
+      }
+    },
+    {
+      "id": "noaa-nws-d1d8a4c026ec546561d6a67a",
+      "title": "NOAA NWS point metadata / short-range weather forecast",
+      "source_ids": [
+        "noaa-nws"
+      ],
+      "kind": "forecast",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/noaa-nws/d1d8a4c026ec546561d6a67a-2026-11-14T211257_0000-2d8718e890f9.json",
+      "local_available": true,
+      "product": "noaa-nws",
+      "version": null,
+      "source_url": "https://api.weather.gov/gridpoints/ICT/57,70/forecast/hourly",
+      "retrieved_at": "2026-11-14T21:12:57+00:00",
+      "verified_at": "2026-11-14T21:12:57+00:00",
+      "license": "Public domain NWS content unless otherwise noted; attribution and no implied endorsement",
+      "license_url": "https://www.weather.gov/disclaimer",
+      "redistribution_allowed": true,
+      "citation": "NOAA National Weather Service, api.weather.gov",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Requested NWS forecast grid; see point metadata",
+        "resolution": "NWS forecast grid ~2.5 km; not a parcel measurement"
+      },
+      "temporal": {
+        "start": "2026-11-14T15:00:00-06:00",
+        "end": "2026-11-21T03:00:00-06:00",
+        "step": "See startTime/endTime per forecast period",
+        "timezone": "ISO 8601 offset in each forecast period",
+        "issued_at": "2026-11-14T20:26:22+00:00"
+      },
+      "variables": [
+        {
+          "name": "temperature",
+          "definition": "Forecast air temperature; not soil temperature",
+          "unit": "temperatureUnit per period",
+          "nodata": null
+        },
+        {
+          "name": "probabilityOfPrecipitation",
+          "definition": "Precipitation probability; not rainfall amount",
+          "unit": "%",
+          "nodata": null
+        }
+      ],
+      "quality_notes": "Short-range forecast, not observation or historical reanalysis. Validate issue time and remaining horizon before use. Point metadata has no forecast values.",
+      "sha256": "2d8718e890f99fa2632afebdde5f236aed9edb630f5b23e018451404fbcf7ee3",
+      "request": {
+        "url": "https://api.weather.gov/gridpoints/ICT/57,70/forecast/hourly",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-1ae596540385c9af1102ec5c",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/1ae596540385c9af1102ec5c-2026-11-14T214016_0000-4c7e65cb9380.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.1875&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:16+00:00",
+      "verified_at": "2026-11-14T21:40:16+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "4c7e65cb9380eb80ecb71217e911d4d9a29299e269a2aa195b15b4a25d846a89",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.1875&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-8c9e4220451fd84e6436ed5b",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/8c9e4220451fd84e6436ed5b-2026-11-14T214016_0000-da13852992cb.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.0625&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:16+00:00",
+      "verified_at": "2026-11-14T21:40:16+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "da13852992cb355171aace4f6abc8941da5f61b80dc8fd190359f55f03eb6adf",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.0625&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-1c7198d7ce8bd620e68d6e89",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/1c7198d7ce8bd620e68d6e89-2026-11-14T214016_0000-3717c0cf15fe.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.3125&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:16+00:00",
+      "verified_at": "2026-11-14T21:40:16+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "3717c0cf15fe3c6ce9277c3f3d648599efa71a7439580a565e575011aaced1cc",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.3125&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-f0dcda2d089bb08cc9e7d394",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/f0dcda2d089bb08cc9e7d394-2026-11-14T214018_0000-0f474beb8211.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.6875&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:18+00:00",
+      "verified_at": "2026-11-14T21:40:18+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "0f474beb8211c450977987d41d8253adb5fe3100fd40b9f4a2c7f1dda8862960",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.6875&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-a993b2f512e0ff0b6d238e1f",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/a993b2f512e0ff0b6d238e1f-2026-11-14T214018_0000-0972b4b11309.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.8125&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:18+00:00",
+      "verified_at": "2026-11-14T21:40:18+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "0972b4b11309906a5f38113efcb8d4dcc68ab7bd9591927344f79e6f1a1a3488",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.8125&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-7b94ac8640199d7fbc9c1acb",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/7b94ac8640199d7fbc9c1acb-2026-11-14T214018_0000-02c19e1d0956.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.8125&latitude=39.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:18+00:00",
+      "verified_at": "2026-11-14T21:40:18+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "02c19e1d09560b58373a7ce48111fccf736fb11aa20031098579e610b54dfd7b",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.8125&latitude=39.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "usda-cdl-4eed94c89b57c518740e73a8",
+      "title": "USDA Cropland Data Layer point samples/catalog/legend",
+      "source_ids": [
+        "usda-cdl"
+      ],
+      "kind": "model_estimate",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/usda-cdl/4eed94c89b57c518740e73a8-2026-11-14T214019_0000-b07966c3be61.json",
+      "local_available": true,
+      "product": "usda-cdl",
+      "version": null,
+      "source_url": "https://pdi.scinet.usda.gov/image/rest/services/CDL_WM/ImageServer/getSamples?f=json&geometry=%7B%22points%22%3A%5B%5B-101.575%2C37.175%5D%2C%5B-100.525%2C37.175%5D%2C%5B-101.575%2C37.725%5D%2C%5B-100.525%2C37.725%5D%2C%5B-99.375%2C37.175%5D%2C%5B-98.125%2C37.175%5D%2C%5B-99.375%2C37.725%5D%2C%5B-98.125%2C37.725%5D%2C%5B-96.875%2C37.175%5D%2C%5B-95.625%2C37.175%5D%2C%5B-96.875%2C37.725%5D%2C%5B-95.625%2C37.725%5D%2C%5B-94.875%2C37.175%5D%2C%5B-94.625%2C37.175%5D%2C%5B-94.875%2C37.725%5D%2C%5B-94.625%2C37.725%5D%2C%5B-101.575%2C38.5%5D%2C%5B-100.525%2C38.5%5D%2C%5B-101.575%2C39.5%5D%2C%5B-100.525%2C39.5%5D%2C%5B-94.875%2C38.5%5D%2C%5B-94.625%2C38.5%5D%2C%5B-94.875%2C39.5%5D%2C%5B-94.625%2C39.5%5D%2C%5B-101.575%2C40.025%5D%2C%5B-100.525%2C40.025%5D%2C%5B-101.575%2C40.075%5D%2C%5B-100.525%2C40.075%5D%2C%5B-99.375%2C40.025%5D%2C%5B-98.125%2C40.025%5D%2C%5B-99.375%2C40.075%5D%2C%5B-98.125%2C40.075%5D%2C%5B-96.875%2C40.025%5D%2C%5B-95.625%2C40.025%5D%2C%5B-96.875%2C40.075%5D%2C%5B-95.625%2C40.075%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D&geometryType=esriGeometryMultipoint&mosaicRule=%7B%22mosaicMethod%22%3A%22esriMosaicLockRaster%22%2C%22lockRasterIds%22%3A%5B40%5D%2C%22where%22%3A%22Year%3D2025%22%2C%22mosaicOperation%22%3A%22MT_FIRST%22%7D&returnFirstValueOnly=true&outFields=Year%2CName",
+      "retrieved_at": "2026-11-14T21:40:19+00:00",
+      "verified_at": "2026-11-14T21:40:19+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "USDA NASS Cropland Data Layer / CroplandCROS",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "CDL native raster resolution returned in each point sample; not polygon-wide coverage"
+      },
+      "temporal": {
+        "start": null,
+        "end": null,
+        "step": null,
+        "timezone": null
+      },
+      "variables": [
+        {
+          "name": "value",
+          "definition": "USDA CDL classification code; consult fetched official legend",
+          "unit": "categorical",
+          "nodata": [
+            0,
+            81,
+            255
+          ]
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "b07966c3be6119e4e9edb25d5d77520510bfe176176d0f731f7286b6a7d17094",
+      "request": {
+        "url": "https://pdi.scinet.usda.gov/image/rest/services/CDL_WM/ImageServer/getSamples?f=json&geometry=%7B%22points%22%3A%5B%5B-101.575%2C37.175%5D%2C%5B-100.525%2C37.175%5D%2C%5B-101.575%2C37.725%5D%2C%5B-100.525%2C37.725%5D%2C%5B-99.375%2C37.175%5D%2C%5B-98.125%2C37.175%5D%2C%5B-99.375%2C37.725%5D%2C%5B-98.125%2C37.725%5D%2C%5B-96.875%2C37.175%5D%2C%5B-95.625%2C37.175%5D%2C%5B-96.875%2C37.725%5D%2C%5B-95.625%2C37.725%5D%2C%5B-94.875%2C37.175%5D%2C%5B-94.625%2C37.175%5D%2C%5B-94.875%2C37.725%5D%2C%5B-94.625%2C37.725%5D%2C%5B-101.575%2C38.5%5D%2C%5B-100.525%2C38.5%5D%2C%5B-101.575%2C39.5%5D%2C%5B-100.525%2C39.5%5D%2C%5B-94.875%2C38.5%5D%2C%5B-94.625%2C38.5%5D%2C%5B-94.875%2C39.5%5D%2C%5B-94.625%2C39.5%5D%2C%5B-101.575%2C40.025%5D%2C%5B-100.525%2C40.025%5D%2C%5B-101.575%2C40.075%5D%2C%5B-100.525%2C40.075%5D%2C%5B-99.375%2C40.025%5D%2C%5B-98.125%2C40.025%5D%2C%5B-99.375%2C40.075%5D%2C%5B-98.125%2C40.075%5D%2C%5B-96.875%2C40.025%5D%2C%5B-95.625%2C40.025%5D%2C%5B-96.875%2C40.075%5D%2C%5B-95.625%2C40.075%5D%5D%2C%22spatialReference%22%3A%7B%22wkid%22%3A4326%7D%7D&geometryType=esriGeometryMultipoint&mosaicRule=%7B%22mosaicMethod%22%3A%22esriMosaicLockRaster%22%2C%22lockRasterIds%22%3A%5B40%5D%2C%22where%22%3A%22Year%3D2025%22%2C%22mosaicOperation%22%3A%22MT_FIRST%22%7D&returnFirstValueOnly=true&outFields=Year%2CName",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-539d0dd801548e2a6ae616e7",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/539d0dd801548e2a6ae616e7-2026-11-14T214020_0000-4b3eacf33ae6.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.9375&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:20+00:00",
+      "verified_at": "2026-11-14T21:40:20+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "4b3eacf33ae67fe43dd83357d78fcfb52ba7825f60ea19743c3da6455269153d",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.9375&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-3ba6a3ff18990fd60a283b5e",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/3ba6a3ff18990fd60a283b5e-2026-11-14T214020_0000-1ae7030875f6.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-96.5625&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:20+00:00",
+      "verified_at": "2026-11-14T21:40:20+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "1ae7030875f6a99eee0fbab3acf3204e31523b5d4ca4c3ae3e75a1f12ad64c2c",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-96.5625&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-f1f8e8176f42ee37eeec7bca",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/f1f8e8176f42ee37eeec7bca-2026-11-14T214020_0000-360b558d9d5a.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-96.5625&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:20+00:00",
+      "verified_at": "2026-11-14T21:40:20+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "360b558d9d5a2833490e624267066ceb8fbc2e41831fed4613cf5b1ceea7d0d0",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-96.5625&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-c5fbf02eaf6d1c172788cb6a",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/c5fbf02eaf6d1c172788cb6a-2026-11-14T214022_0000-34dd3c152fba.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-98.4375&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:22+00:00",
+      "verified_at": "2026-11-14T21:40:22+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "34dd3c152fbac941c428014246c82779961892e84f9b9a83add2113fbdfb345f",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-98.4375&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-ba21fdc94f027d3c9912df8e",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/ba21fdc94f027d3c9912df8e-2026-11-14T214022_0000-318ab7cb57fe.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-101.5625&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:22+00:00",
+      "verified_at": "2026-11-14T21:40:22+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "318ab7cb57fe7d7d882877faf0cd3d2d56dfcd57dcb7d0b6a112d58cd570d6c5",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-101.5625&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-6ad535307b8b43ce4a92a9c0",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/6ad535307b8b43ce4a92a9c0-2026-11-14T214022_0000-989f34aab9fa.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-101.5625&latitude=37.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:22+00:00",
+      "verified_at": "2026-11-14T21:40:22+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "989f34aab9fa9137f8fd61abc0dcc4df24db87cbd106c6e569f9c7c8cdf95d00",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-101.5625&latitude=37.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-ba88cab6d6dd453944e9117e",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/ba88cab6d6dd453944e9117e-2026-11-14T214023_0000-62deedbdcac6.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.0625&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:23+00:00",
+      "verified_at": "2026-11-14T21:40:23+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "62deedbdcac68154c3beb7816987b5773a775048ded1fe11b4c76a375d8d02a4",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.0625&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-a4fb56a991f57940814a9c71",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/a4fb56a991f57940814a9c71-2026-11-14T214024_0000-2a5e4085df78.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.3125&latitude=37.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:24+00:00",
+      "verified_at": "2026-11-14T21:40:24+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "2a5e4085df789f8e51539b8a59fd760c852ee29411076a54f3e88e8e6584ccf6",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.3125&latitude=37.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-7517130bbf0726e363bd97c1",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/7517130bbf0726e363bd97c1-2026-11-14T214024_0000-6bb870fd616f.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.0625&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:24+00:00",
+      "verified_at": "2026-11-14T21:40:24+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "6bb870fd616ff725e85a20c7a8979d21b92a59d5e9b3de76b806cdd89068b997",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.0625&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-f91a8b7a847728f66dd5bec9",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/f91a8b7a847728f66dd5bec9-2026-11-14T214025_0000-126bb8266019.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.9375&latitude=39.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:25+00:00",
+      "verified_at": "2026-11-14T21:40:25+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "126bb826601967deb9ae64fb859080784e5dfde5350d22c1a140556290707460",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.9375&latitude=39.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-b6c467e5e4fba1a99202c607",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/b6c467e5e4fba1a99202c607-2026-11-14T214025_0000-d9b231587928.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.3125&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:25+00:00",
+      "verified_at": "2026-11-14T21:40:25+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "d9b2315879286f323e14576c8b02ebf7526d655426b6defc45cbfecdd6c2db10",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.3125&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-40056bde674f366d71c7a5ac",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/40056bde674f366d71c7a5ac-2026-11-14T214025_0000-b5d43bcbe32c.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-96.5625&latitude=40.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:25+00:00",
+      "verified_at": "2026-11-14T21:40:25+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "b5d43bcbe32c0150549eb2c1ac7bb07f575e6e2d72e1838defef1aa4d0b37637",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-96.5625&latitude=40.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-911ef242963875fae0c1b67d",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/911ef242963875fae0c1b67d-2026-11-14T214026_0000-6a913285eeb0.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.3125&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:26+00:00",
+      "verified_at": "2026-11-14T21:40:26+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "6a913285eeb0a4da74b6fc30d037a9ff2c0622c4e9e809503c933940871d8078",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.3125&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-6b84b24d53a951ab4e21690c",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/6b84b24d53a951ab4e21690c-2026-11-14T214027_0000-53e40cef4697.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.9375&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:27+00:00",
+      "verified_at": "2026-11-14T21:40:27+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "53e40cef469714aa8009edb75be3ed5ba79c5fdc8936f512cbec9c41d552d3ad",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.9375&latitude=37.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-7dcbaec79027af594dd8847b",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/7dcbaec79027af594dd8847b-2026-11-14T214027_0000-9a06d1f57f3e.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-94.6875&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:27+00:00",
+      "verified_at": "2026-11-14T21:40:27+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "9a06d1f57f3e6cd26f41dabf9565e987af88c3202ccc091667f39f1ad040c3c0",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-94.6875&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-55a0d407d808fdde5fccc6a4",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/55a0d407d808fdde5fccc6a4-2026-11-14T214028_0000-095b8c790594.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-94.6875&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:28+00:00",
+      "verified_at": "2026-11-14T21:40:28+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "095b8c790594d4f4ab8ed0f10c1f5afb8b5f380041e97fcda968ebcb8e314511",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-94.6875&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-eb2e21de4cb7b562272f2a93",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/eb2e21de4cb7b562272f2a93-2026-11-14T214028_0000-030c8cfe17c9.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.9375&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:28+00:00",
+      "verified_at": "2026-11-14T21:40:28+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "030c8cfe17c9199c7b38fdadad7346b1227abf56fbc1040f478a0fbeac55fd72",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.9375&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-7446653b08504362d01bdb99",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/7446653b08504362d01bdb99-2026-11-14T214028_0000-715048759c2c.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-98.4375&latitude=39.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:28+00:00",
+      "verified_at": "2026-11-14T21:40:28+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "715048759c2c25f66d5737e96e848a75050971b673d2d7949d7c9800555f3f40",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-98.4375&latitude=39.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-9c3e05334e88cc3545ad3638",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/9c3e05334e88cc3545ad3638-2026-11-14T214029_0000-37001f65fd74.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.1875&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:29+00:00",
+      "verified_at": "2026-11-14T21:40:29+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "37001f65fd74705bb40cf670e52707e9c5c7596c7a0c1a71f0facfb4a4aef090",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.1875&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-95c3aeeca4a93110ee4ffb3b",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/95c3aeeca4a93110ee4ffb3b-2026-11-14T214029_0000-2688ae0330e2.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.9375&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:29+00:00",
+      "verified_at": "2026-11-14T21:40:29+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "2688ae0330e24b2e57e993c9ec22d7cdb1bddffff6100d7912bb31b812303875",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-95.9375&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-7a067b7a5f792baea151c0f1",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/7a067b7a5f792baea151c0f1-2026-11-14T214030_0000-91c6863051e9.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.8125&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:30+00:00",
+      "verified_at": "2026-11-14T21:40:30+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "91c6863051e97b2dfcfc74a26b640ad6f9fcf8f25e245c8fc84734297342f6f5",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.8125&latitude=36.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-7aac9a6e531675913d3a3140",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/7aac9a6e531675913d3a3140-2026-11-14T214031_0000-0fd71ca18833.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-94.6875&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:31+00:00",
+      "verified_at": "2026-11-14T21:40:31+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "0fd71ca18833aec4333e98c9dee019fc38b0a4f999681c2c5fb0decce59efbda",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-94.6875&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-5c113c9983d0a7c521d96e41",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/5c113c9983d0a7c521d96e41-2026-11-14T214031_0000-636fb33ae3e0.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-98.4375&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:31+00:00",
+      "verified_at": "2026-11-14T21:40:31+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "636fb33ae3e0f939ebe71b524bf90fe65f9deab010398b15da9c53b414f98b46",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-98.4375&latitude=39.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-49182dd0afdb403ce6164436",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/49182dd0afdb403ce6164436-2026-11-14T214032_0000-4aee2543c0f4.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.1875&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:32+00:00",
+      "verified_at": "2026-11-14T21:40:32+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "4aee2543c0f4aba885705fdf3edf8a95423e6dd0e7b5fccae4bfe9937503e971",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-97.1875&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-cfcd3129b34fe64788981f00",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/cfcd3129b34fe64788981f00-2026-11-14T214033_0000-5d0729f47233.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.6875&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:33+00:00",
+      "verified_at": "2026-11-14T21:40:33+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "5d0729f472339f8d772f8fe0ccccf7de4274ec21d3ba32251e0c97fbc902f88f",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.6875&latitude=38.25&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-b6a70fd566e0d9ecc588f641",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/b6a70fd566e0d9ecc588f641-2026-11-14T214033_0000-0fef4d5fbeab.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.6875&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:33+00:00",
+      "verified_at": "2026-11-14T21:40:33+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "0fef4d5fbeab2300b4a95798d29e25677ebac0f41e737255a3789941b9220ed8",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-99.6875&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
+    },
+    {
+      "id": "nasa-power-771864dae061143a2afc3eea",
+      "title": "NASA POWER daily point response",
+      "source_ids": [
+        "nasa-power"
+      ],
+      "kind": "reanalysis",
+      "is_demo": false,
+      "layer": "raw",
+      "path": "data/raw/live/nasa-power/771864dae061143a2afc3eea-2026-11-14T214033_0000-4eebe5eb1bc4.json",
+      "local_available": true,
+      "product": "NASA/POWER Source Native Resolution Daily Data",
+      "version": "v2.10.3",
+      "source_url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.9375&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T21:40:33+00:00",
+      "verified_at": "2026-11-14T21:40:33+00:00",
+      "license": null,
+      "license_url": null,
+      "redistribution_allowed": null,
+      "citation": "NASA POWER Project, NASA Langley Research Center",
+      "spatial": {
+        "crs": "EPSG:4326",
+        "coverage": "Request-specific; see request parameters",
+        "resolution": "Meteorology native ~0.5° × 0.625°; solar ~1° (not field measurements)"
+      },
+      "temporal": {
+        "start": "20250101",
+        "end": "20251231",
+        "step": "daily",
+        "timezone": "LST"
+      },
+      "variables": [
+        {
+          "name": "T2M",
+          "definition": "Temperature at 2 Meters",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MAX",
+          "definition": "Temperature at 2 Meters Maximum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "T2M_MIN",
+          "definition": "Temperature at 2 Meters Minimum",
+          "unit": "C",
+          "nodata": -999.0
+        },
+        {
+          "name": "PRECTOTCORR",
+          "definition": "Precipitation Corrected",
+          "unit": "mm/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "ALLSKY_SFC_SW_DWN",
+          "definition": "All Sky Surface Shortwave Downward Irradiance",
+          "unit": "MJ/m^2/day",
+          "nodata": -999.0
+        },
+        {
+          "name": "RH2M",
+          "definition": "Relative Humidity at 2 Meters",
+          "unit": "%",
+          "nodata": -999.0
+        },
+        {
+          "name": "WS2M",
+          "definition": "Wind Speed at 2 Meters",
+          "unit": "m/s",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETROOT",
+          "definition": "Root Zone Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        },
+        {
+          "name": "GWETTOP",
+          "definition": "Surface Soil Wetness",
+          "unit": "1",
+          "nodata": -999.0
+        }
+      ],
+      "quality_notes": "Immutable upstream response. Derived outputs must validate completeness, units and spatial support. Unverified redistribution terms are null, not a permission.",
+      "sha256": "4eebe5eb1bc40536d853f8930907eb52f3be639d0983fd5ffe1f93d3ca01a472",
+      "request": {
+        "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M%2CT2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CALLSKY_SFC_SW_DWN%2CRH2M%2CWS2M%2CGWETROOT%2CGWETTOP&community=AG&longitude=-100.9375&latitude=38.75&start=20250101&end=20251231&format=JSON&time-standard=LST",
+        "body": null
+      }
     }
   ]
 }

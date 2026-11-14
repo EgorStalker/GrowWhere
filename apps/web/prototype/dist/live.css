@@ -229,6 +229,13 @@ input,select{border:1px solid #96a29a;border-radius:5px;font-variant-numeric:tab
 .live-loading-indicator{display:inline-block;width:13px;height:13px;border:2px solid #a5c5ab;border-top-color:var(--brand-ink);border-radius:50%;animation:live-spin .8s linear infinite;flex-shrink:0}
 @keyframes live-spin{to{transform:rotate(360deg)}}
 .live-dialog-text{font-size:15px;line-height:1.65;color:#394640;margin-bottom:14px}
+.planning-readiness{margin:18px 0;padding:16px 20px;border:1px solid #a68035;border-left:5px solid #a68035;border-radius:6px;background:#fff9e9;color:#47320e;font-size:16px;line-height:1.5}
+.planning-readiness strong{display:block;font-size:17px}
+.planning-readiness ul{margin:8px 0;padding-left:22px}
+.planning-readiness p{margin:8px 0 0}
+.planning-point{background:#fff9e9;border-color:#c7af76;gap:10px}
+.planning-point summary{cursor:pointer;font-size:14px;font-weight:700;min-height:36px;padding:7px 0}
+.planning-point .live-missing-list{margin-top:6px;font-size:13px}
 .live-dialog-formula{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#f2f5ef;border:1px solid var(--border-hard);border-radius:5px;padding:14px;line-height:1.7;margin:12px 0}
 .live-factor-list{display:grid;gap:6px;margin-top:10px}
 .live-factor{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;border-bottom:1px solid var(--border-soft)}
