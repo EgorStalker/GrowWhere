@@ -1,0 +1,25 @@
+# Local credentials and settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+.next/
+dist/
+build/
+# The first buildless prototype keeps its maintained static source in dist.
+!/apps/web/prototype/dist/
+!/apps/web/prototype/dist/**
+.artifacts/
+.DS_Store
+Thumbs.db
+
+# Bulk data stays local; metadata and deliberately small samples stay versioned.
+/data/raw/*
+!/data/raw/.gitkeep
+/data/processed/*
+!/data/processed/.gitkeep

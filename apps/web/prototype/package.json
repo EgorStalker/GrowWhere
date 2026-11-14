@@ -1,0 +1,11 @@
+{
+  "name": "growwhere-prototype",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "python scripts/test.py",
+    "export": "node scripts/export-preview.mjs"
+  }
+}
