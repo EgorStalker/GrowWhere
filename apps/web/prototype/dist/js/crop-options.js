@@ -6,10 +6,9 @@ const finite=value=>typeof value==='number'&&Number.isFinite(value);
 const nonnegative=value=>finite(value)&&value>=0?value:null;
 // A bounding-box midpoint can lie outside a concave field. Choose the middle
 // of its widest interior interval at mid-latitude instead (single-ring parcels).
-export function parcelReferencePoint(area) {
-  const ring=area?.ring;
-  if(!Array.isArray(ring)||ring.length<4||ring.some(p=>!Array.isArray(p)||!finite(p[0])||!finite(p[1])))return null;
-  const lat=(Math.min(...ring.map(p=>p[1]))+Math.max(...ring.map(p=>p[1])))/2;
+function widestPointAtFraction(ring,fraction) {
+  const minLat=Math.min(...ring.map(p=>p[1])),maxLat=Math.max(...ring.map(p=>p[1]));
+  const lat=minLat+(maxLat-minLat)*fraction;
   const crossings=[];
   for(let i=0;i<ring.length-1;i++){
     const [x,y]=ring[i],[nextX,nextY]=ring[i+1];
@@ -22,6 +21,21 @@ export function parcelReferencePoint(area) {
     if(width>0&&(!best||width>best.width))best={lon:(crossings[i]+crossings[i+1])/2,lat,width};
   }
   return best?{lon:best.lon,lat:best.lat}:null;
+}
+
+export function parcelCandidatePoints(area) {
+  const ring=area?.ring;
+  if(!Array.isArray(ring)||ring.length<4||ring.some(p=>!Array.isArray(p)||!finite(p[0])||!finite(p[1])))return [];
+  const points=[];
+  for(const frac of [0.5,0.35,0.65,0.22,0.78]){
+    const pt=widestPointAtFraction(ring,frac);
+    if(pt&&!points.some(p=>Math.abs(p.lon-pt.lon)<1e-6&&Math.abs(p.lat-pt.lat)<1e-6))points.push(pt);
+  }
+  return points;
+}
+
+export function parcelReferencePoint(area) {
+  return parcelCandidatePoints(area)[0]||null;
 }
 export function normalizeCropOptions(payload,year) {
   if(payload?.query?.year!==year||!Array.isArray(payload?.crop_comparison))throw new Error('Отримано дані іншого періоду. Спробуйте ще раз.');
@@ -54,7 +68,7 @@ export function normalizeCropOptions(payload,year) {
     ]};
 }
 
-export async function fetchCropOptions({lon,lat,year,signal}) {
+async function fetchSinglePointOptions({lon,lat,year,signal}) {
   const [w,s,e,n]=KANSAS;
   if(!finite(lon)||!finite(lat)||lon<w||lon>e||lat<s||lat>n)throw new Error('Для порівняння потрібна точка в пілотній області Канзасу.');
   if(!Number.isInteger(year)||year<1984||year>=new Date().getUTCFullYear())throw new Error('Оберіть завершений історичний рік.');
@@ -63,4 +77,17 @@ export async function fetchCropOptions({lon,lat,year,signal}) {
   const value=await response.json();
   if(!response.ok)throw new Error(value.error||'Не вдалося отримати порівняння культур.');
   return normalizeCropOptions(value,year);
+}
+
+export async function fetchCropOptions({area,lon,lat,year,signal}) {
+  const candidates=area?parcelCandidatePoints(area):[];
+  const points=candidates.length?candidates:[{lon,lat}];
+  let firstResult=null;
+  for(const pt of points){
+    const res=await fetchSinglePointOptions({lon:pt.lon,lat:pt.lat,year,signal});
+    res.samplePoint={lon:pt.lon,lat:pt.lat};
+    if(!firstResult)firstResult=res;
+    if(res.options.some(o=>o.score!==null))return res;
+  }
+  return firstResult;
 }

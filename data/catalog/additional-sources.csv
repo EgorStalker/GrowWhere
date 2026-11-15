@@ -3,3 +3,4 @@ usda-ers-costs,USDA ERS Commodity Costs and Returns,regional_costs_and_harvest_p
 noaa-nws,NOAA National Weather Service,short_range_weather_forecast,https://www.weather.gov/documentation/services-web-api,connected
 kstate-extension,Kansas State University Research and Extension,local_crop_sowing_rules,https://bookstore.ksre.ksu.edu/pubs/kansas-crop-planting-guide_L818.pdf,partial_rules_verified
 kansas-mesonet,Kansas Mesonet,soil_temperature_observations,https://mesonet.k-state.edu/about/usage/,automated_ingest_requires_written_consent
+open-meteo,Open-Meteo Weather & Soil Forecast,model_soil_temp_moisture_and_et0_7d,https://open-meteo.com/en/docs,connected

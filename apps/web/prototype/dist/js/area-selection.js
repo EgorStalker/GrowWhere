@@ -150,6 +150,8 @@ export function aggregateTerritory(features, areaRing) {
   const factorWeights = {};
   let weightedScoreSum = 0;
   let weightSum = 0;
+  let totalAreaWeight = 0;
+  let unknownAreaWeight = 0;
   let scoredCount = 0;
   let wbRain = 0, wbIrr = 0, wbDemand = 0, wbCount = 0;
 
@@ -160,6 +162,8 @@ export function aggregateTerritory(features, areaRing) {
     for (const key of (result?.missing || [])) missingSet.add(key);
     const score = result?.score;
     const areaWeight = Math.max(1, geometryAreaSqMeters(feature.geometry));
+    totalAreaWeight += areaWeight;
+    if (status === 'unknown') unknownAreaWeight += areaWeight;
     if (score !== null && score !== undefined && Number.isFinite(Number(score))) {
       weightedScoreSum += Number(score) * areaWeight;
       weightSum += areaWeight;
@@ -191,6 +195,7 @@ export function aggregateTerritory(features, areaRing) {
   } : null;
 
   const totalCount = intersecting.length;
+  const coveragePct = totalAreaWeight > 0 ? Math.round(((totalAreaWeight - unknownAreaWeight) / totalAreaWeight) * 100) : 0;
   let status = 'unknown';
   let score = null;
   let reason = null;
@@ -201,16 +206,16 @@ export function aggregateTerritory(features, areaRing) {
   } else if (counts.excluded === totalCount) {
     status = 'excluded';
     reason = 'all_excluded';
-  } else if (counts.unknown > 0) {
-    status = 'unknown';
-    reason = 'partial_unknown';
   } else if (scoredCount === 0) {
     status = 'unknown';
     reason = 'no_scored';
+  } else if (totalAreaWeight > 0 && unknownAreaWeight / totalAreaWeight > 0.5) {
+    status = 'unknown';
+    reason = 'mostly_unknown';
   } else {
     score = Math.round(weightedScoreSum / weightSum);
     status = score >= 70 ? 'good' : score >= 40 ? 'conditional' : 'poor';
-    reason = 'scored';
+    reason = counts.unknown > 0 ? 'partial_unknown' : 'scored';
   }
 
   return {
@@ -219,6 +224,7 @@ export function aggregateTerritory(features, areaRing) {
     counts,
     totalCount,
     scoredCount,
+    coveragePct,
     intersectingFeatures: intersecting,
     intersectingIds: new Set(intersecting.map(f => String(f.properties?.id ?? f.id))),
     areaHa: areaRing?.length ? geodesicAreaHa(areaRing) : 0,

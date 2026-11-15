@@ -285,3 +285,5 @@ body.on-territory-stage .live-map{height:56vh;min-height:330px}body.on-territory
 
 .mode-card .step-num{justify-self:start}
 body.on-territory-stage .live-shell{padding-top:12px}.territory-stage{gap:6px;padding:0!important}.territory-stage .eyebrow{margin:4px 0!important}.territory-stage h1{margin:4px 0!important}.territory-stage .lead{margin:4px 0 10px!important}
+.planning-user-fields{display:grid;gap:14px;padding:14px;border:1px solid #d5e1da;border-radius:12px;background:#f7fbf8}
+.planning-user-fields label{font-size:13px;font-weight:600;color:#1d3528}

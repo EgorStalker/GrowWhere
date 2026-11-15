@@ -69,12 +69,13 @@ def _aggregate_grid_cell(feature, points, soil_samples, cover_by_id, power, crop
     valid_covers=[c for c in sub_covers if c]
     cropland_cover=next((c for c in valid_covers if c.get('allow_analysis') is True),valid_covers[0] if valid_covers else None)
     clim=next((c for c in sub_climates if c and c.get('complete')),sub_climates[0] if sub_climates else None)
+    unknown_ratio = counts['unknown'] / len(points) if points else 1.0
     uncertainty={'sample_count':len(points),'scored_samples':len(scored),'excluded_samples':counts['excluded'],
-        'unknown_samples':counts['unknown'],'ag_share':round(sum(c.get('allow_analysis') is True for c in sub_covers if c)/len(points),2),'counts':counts}
-    # A valid subset cannot conceal critical gaps in the remaining samples.
-    # Excluded land cover is a known class, whereas unknown is missing evidence.
-    if counts['unknown'] > 0 or not scored:
-        if counts['excluded']>0 and counts['unknown']==0:
+        'unknown_samples':counts['unknown'],'coverage_ratio':round(1.0-unknown_ratio,2),'partial_unknown':counts['unknown']>0,
+        'ag_share':round(sum(c.get('allow_analysis') is True for c in sub_covers if c)/len(points),2),'counts':counts}
+    # Require >= 60% defined samples (and at least one scored sample) instead of blanking a whole overview cell on 1/5 missing.
+    if not scored or unknown_ratio > 0.4:
+        if counts['excluded']>0 and counts['unknown']==0 and not scored:
             result={'score':None,'status':'excluded','missing':[],'exclusion':'landcover_not_agricultural','landcover_gate':'sample_excluded','uncertainty':uncertainty}
         else:
             result={'score':None,'status':'unknown','factors':{},'missing':missing_union or ['unknown'],'method':METHOD_VERSION,'uncertainty':uncertainty}
@@ -91,7 +92,7 @@ def _aggregate_grid_cell(feature, points, soil_samples, cover_by_id, power, crop
     uncertainty['score_range']=[round(min(scores),1),round(max(scores),1)]
     uncertainty['score_spread']=round(max(scores)-min(scores),1)
     result={'score':mean_score,'status':'good' if mean_score>=70 else 'conditional' if mean_score>=40 else 'poor',
-        'factors':factors,'limiting_factor':limiting,'water_balance':wb,'missing':[],'method':METHOD_VERSION,
+        'factors':factors,'limiting_factor':limiting,'water_balance':wb,'missing':missing_union if counts['unknown']>0 else [],'method':METHOD_VERSION,
         'irrigation_assumption':scored[0].get('irrigation_assumption'),'uncertainty':uncertainty}
     return agg_soil,clim,cropland_cover,result,cover_urls
 
@@ -219,6 +220,8 @@ def source_status():
     connected['usda-cdl']='Покрив у точці за точний рік; роздільність конкретного продукту (2025: 10 м)'
     connected['noaa-nws']='Короткостроковий погодинний прогноз для точки; повітря, не температура ґрунту; не входить до історичного індексу'
     urls['noaa-nws']='https://www.weather.gov/documentation/services-web-api'
+    connected['open-meteo']='Модельний 7-денний прогноз температури ґрунту (6 см), вологості (0–27 см) та ET0 (GFS/ECMWF, ~9–11 км)'
+    urls['open-meteo']='https://open-meteo.com/en/docs'
     for filename in ['sources.csv','additional-sources.csv']:
         path=ROOT/'data/catalog'/filename
         if not path.exists(): continue

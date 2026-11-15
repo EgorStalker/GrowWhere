@@ -230,5 +230,23 @@ class ServiceTests(unittest.TestCase):
         self.assertFalse({'request','path','token'} & compact.keys())
         self.assertNotIn('PRIVATE SQL',str(compact))
 
+    def test_partial_unknown_grid_cell_keeps_score_when_majority_valid(self):
+        def points_with_one_missing(features,refresh):
+            out={}
+            for idx,f in enumerate(features):
+                out[f['id']]=soil_fixture() if idx%5!=0 else None
+            return out,provenance('ssurgo-statsgo2')
+        with patch.object(service.soil,'points',side_effect=points_with_one_missing), \
+             patch.object(service,'power_point',return_value=({},provenance())), \
+             patch.object(service,'climate_metrics',return_value=climate_fixture()):
+            result=self.analyze(zoom=7,bbox=[-98,38,-97,39])
+        self.assertGreater(len(result['features']),0)
+        for feature in result['features']:
+            rating=feature['properties']['result']
+            self.assertNotEqual(rating['status'],'unknown')
+            self.assertIsNotNone(rating['score'])
+            self.assertTrue(rating['uncertainty']['partial_unknown'])
+            self.assertEqual(rating['uncertainty']['coverage_ratio'],0.8)
+
 
 if __name__=='__main__': unittest.main()

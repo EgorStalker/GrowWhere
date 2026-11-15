@@ -95,7 +95,7 @@ class InsightsTests(unittest.TestCase):
         self.assertGreater(unc['score_spread'], 0)
         self.assertIsNotNone(props['result']['score'])
 
-    def test_unknown_grid_sample_cannot_be_hidden_by_scored_subset(self):
+    def test_unknown_grid_sample_exposes_coverage_and_blocks_when_majority_missing(self):
         feature = service.grid([-98, 38, -97, 39], 8)[0][0]
         points = service._grid_sample_points(feature)
         soils = {pt['id']: soil_sample() for pt in points}
@@ -104,11 +104,20 @@ class InsightsTests(unittest.TestCase):
         climate = analysis.climate_metrics(daily_power_fixture(2024), 'wheat', '2024-03-15')
         power = {service.power_key(pt['center']): (climate, None) for pt in points}
         result = service._aggregate_grid_cell(feature, points, soils, covers, power, 'wheat', 0, True)[3]
-        self.assertEqual(result['status'], 'unknown')
-        self.assertIsNone(result['score'])
+        self.assertNotEqual(result['status'], 'unknown')
+        self.assertIsNotNone(result['score'])
         self.assertEqual(result['uncertainty']['scored_samples'], 4)
         self.assertEqual(result['uncertainty']['unknown_samples'], 1)
+        self.assertEqual(result['uncertainty']['coverage_ratio'], 0.8)
+        self.assertTrue(result['uncertainty']['partial_unknown'])
         self.assertTrue(result['missing'])
+
+        soils.pop(points[0]['id'])
+        soils.pop(points[1]['id'])
+        majority_missing = service._aggregate_grid_cell(feature, points, soils, covers, power, 'wheat', 0, True)[3]
+        self.assertEqual(majority_missing['status'], 'unknown')
+        self.assertIsNone(majority_missing['score'])
+        self.assertEqual(majority_missing['uncertainty']['unknown_samples'], 3)
 
     def test_analyze_point_insights_returns_7_crops_risk_and_rotations(self):
         def fake_soil(features, refresh=False):

@@ -117,3 +117,14 @@
   Повну візуальну перевірку браузера в цьому етапі не виконано через обмеження
   доступу до браузера в середовищі. Числові тести не є польовою валідацією.
 - Локальний сервер лишено на `http://127.0.0.1:4173`.
+
+## Оновлення зниження «недостатку даних» (2026-11-15)
+
+1. **Прозоре часткове покриття замість суцільного `unknown` від 1 прогалини:**
+   - `_aggregate_grid_cell()` у `data/pipelines/growwhere/service.py` тепер оцінює комірку, якщо валідна більшість (`>= 60%` точок, напр. `3–5` із `5`), зберігаючи `uncertainty.coverage_ratio`, `uncertainty.partial_unknown` і `missing` для прогалини; якщо `unknown > 40%` або немає жодної оціненої точки — комірка залишається `unknown`.
+   - `aggregateTerritory()` у `apps/web/prototype/dist/js/area-selection.js` повертає площово-зважений `score`, `status` і `coveragePct`, доки невідома частка площі не перевищує `50%` (інакше `mostly_unknown`).
+2. **Підбір культур у контурі (`apps/web/prototype/dist/js/crop-options.js`):**
+   - `parcelCandidatePoints()` перевіряє до 5 внутрішніх точок на різних широтах, якщо перша точка потрапила на неорний піксель або прогалину ґрунту.
+3. **7-денний модельний прогноз ґрунту Open-Meteo і параметри господарства:**
+   - Новий адаптер `data/pipelines/growwhere/soil_forecast.py` (`openmeteo_soil_forecast` + `indicative_guidance`) через `CACHE.fetch('open-meteo', ...)` отримує температуру ґрунту (0 / 6 см), об’ємну вологість (0–27 см), добовий `et0_fao_evapotranspiration` та опади (окремий від польових сенсорів блок `soil_forecast` і `indicative_guidance` у `/api/planning-readiness`).
+   - `planning.py` приймає опційні `irrigation_system`, `crop_growth_stage`, `crop_variety` з Кроку 4 і прозоро позначає їх як надані користувачем (`user_input`), при цьому не підміняє модельні оцінки сертифікованими польовими рекомендаціями (`future_sowing_date.value` та `irrigation_recommendation.value` і далі залишаються `null` без наземної перевірки).

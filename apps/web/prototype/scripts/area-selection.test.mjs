@@ -72,20 +72,31 @@ test('aggregateTerritory computes area-weighted score and status while preservin
   assert.equal(summary.totalCount, 3);
   assert.equal(summary.scoredCount, 2);
   assert.deepEqual(summary.counts, {good: 1, conditional: 1, poor: 0, unknown: 1, excluded: 0});
-  // f1 has 2x the area of f2 -> (84*2 + 60*1)/3 = 76 -> 'good'
-  assert.equal(summary.score, null);
-  assert.equal(summary.status, 'unknown');
+  // f1 has 2x the area of f2 -> (84*2 + 60*1)/3 = 76 -> 'good', with partial_unknown coveragePct (~75% of area).
+  assert.equal(summary.score, 76);
+  assert.equal(summary.status, 'good');
   assert.equal(summary.reason, 'partial_unknown');
+  assert.ok(summary.coveragePct > 65 && summary.coveragePct < 85);
   assert.deepEqual(summary.soilPhRange, [6.5, 7.1]);
   assert.deepEqual(summary.missingKeys, ['soil']);
   assert.equal(summary.avgFactors.water, 0.8);
   assert.equal(summary.avgFactors.temperature, 0.9);
   assert.equal(summary.avgWaterBalance.irrigation_mm, 100);
 
-  // The intersecting units retain their weighted score when none are unknown.
+  // If >50% of the parcel area is unknown, stay unknown instead of guessing.
+  const mostlyUnknown = aggregateTerritory([
+    rectFeature('big-unk', -98.2, 38.0, -98.05, 38.2, 'unknown', null),
+    rectFeature('small-good', -98.05, 38.0, -98.0, 38.2, 'good', 85),
+  ], areaRing);
+  assert.equal(mostlyUnknown.score, null);
+  assert.equal(mostlyUnknown.status, 'unknown');
+  assert.equal(mostlyUnknown.reason, 'mostly_unknown');
+
   const completeSummary = aggregateTerritory(features.filter(f=>f.id!=='f3'), areaRing);
   assert.equal(completeSummary.score, 76);
   assert.equal(completeSummary.status, 'good');
+  assert.equal(completeSummary.reason, 'scored');
+  assert.equal(completeSummary.coveragePct, 100);
 });
 
 test('aggregateTerritory returns excluded when all intersecting zones are excluded and unknown when empty', () => {

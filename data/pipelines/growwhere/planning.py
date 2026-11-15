@@ -111,8 +111,51 @@ def _evidence_checks(evidence):
     return checks
 
 
+def _merge_user_evidence(evidence, irrigation_system, crop_growth_stage, crop_variety, target_year, past_target):
+    merged = dict(evidence or {})
+    if irrigation_system in {'drip', 'sprinkler', 'furrow', 'none'} and 'irrigation_system_efficiency' not in merged:
+        labels = {
+            'drip': 'Крапельний полив (~90% ККД) — вказано користувачем.',
+            'sprinkler': 'Дощувальний полив (~80% ККД) — вказано користувачем.',
+            'furrow': 'Поверхневий / борозенний полив (~60% ККД) — вказано користувачем.',
+            'none': 'Режим без додаткового поливу — вказано користувачем.',
+        }
+        merged['irrigation_system_efficiency'] = {
+            'status': 'available',
+            'verified': True,
+            'supports_selected_scope': True,
+            'source_ref': f'user_input:irrigation_system:{irrigation_system}',
+            'reason': labels[irrigation_system],
+        }
+    if crop_growth_stage in {'pre_planting', 'emergence', 'vegetative', 'reproductive', 'maturity'} and 'crop_growth_stage' not in merged:
+        stage_labels = {
+            'pre_planting': 'До сівби',
+            'emergence': 'Сходи',
+            'vegetative': 'Вегетація',
+            'reproductive': 'Цвітіння / налив',
+            'maturity': 'Дозрівання',
+        }
+        merged['crop_growth_stage'] = {
+            'status': 'available',
+            'verified': True,
+            'supports_selected_scope': True,
+            'source_ref': f'user_input:crop_growth_stage:{crop_growth_stage}',
+            'reason': f'Стадія культури ({stage_labels[crop_growth_stage]}) вказана користувачем.',
+        }
+    if crop_variety and str(crop_variety).strip() and target_year is not None and not past_target and 'crop_variety_and_target_season' not in merged:
+        merged['crop_variety_and_target_season'] = {
+            'status': 'available',
+            'verified': True,
+            'supports_selected_scope': True,
+            'source_ref': f'user_input:crop_variety:{str(crop_variety).strip()}:{target_year}',
+            'reason': f'Форма/сорт ({str(crop_variety).strip()}) та цільовий сезон {target_year} вказані користувачем.',
+        }
+    return merged
+
+
 def planning_readiness(mode='own_land', crop=None, lon=None, lat=None, bbox=None,
-                       target_year=None, scale_ha=None, today=None, evidence=None):
+                       target_year=None, scale_ha=None, today=None, evidence=None,
+                       irrigation_system=None, crop_growth_stage=None, crop_variety=None):
     """Return explicit blockers before any sowing or irrigation recommendation.
 
     `historical_suitability.available` means that the implemented research mode
@@ -153,7 +196,8 @@ def planning_readiness(mode='own_land', crop=None, lon=None, lat=None, bbox=None
     past_target = target_year is not None and target_year < today.year
     target_status = ('unspecified' if target_year is None else 'past' if past_target
                      else 'current' if target_year == today.year else 'future')
-    checks = _evidence_checks(evidence)
+    merged_evidence = evidence if evidence is not None and not isinstance(evidence, dict) else _merge_user_evidence(evidence, irrigation_system, crop_growth_stage, crop_variety, target_year, past_target)
+    checks = _evidence_checks(merged_evidence)
     target_missing = ['target_season'] if target_year is None else []
     sowing_missing = list(dict.fromkeys(scope_missing + target_missing + [key for key in SOWING_MISSING if not checks[key]['verified']]))
     irrigation_missing = list(dict.fromkeys(scope_missing + target_missing + [key for key in IRRIGATION_MISSING if not checks[key]['verified']]))

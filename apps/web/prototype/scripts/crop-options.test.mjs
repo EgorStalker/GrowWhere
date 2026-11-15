@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeCropOptions,fetchCropOptions,parcelReferencePoint} from '../dist/js/crop-options.js';
+import {normalizeCropOptions,fetchCropOptions,parcelReferencePoint,parcelCandidatePoints} from '../dist/js/crop-options.js';
 import {geometryContainsPoint} from '../dist/js/area-selection.js';
 const fixture=rows=>({query:{year:2025},crop_comparison:rows});
 const row=(crop,score=75,extra={})=>({crop,score,status:'good',missing:[],...extra});
@@ -63,5 +63,25 @@ test('comparison request uses an explicit historical rainfed preview without mut
     called=null;
     await assert.rejects(fetchCropOptions({lon:0,lat:0,year:2025}),/Канзасу/);
     assert.equal(called,null);
+  }finally{globalThis.fetch=original;}
+});
+
+test('fetchCropOptions falls back across interior parcel candidates when the first point has unknown status',async()=>{
+  const original=globalThis.fetch;
+  const ring=[[-98,38],[-97.5,38],[-97.5,38.5],[-98,38.5],[-98,38]];
+  const points=parcelCandidatePoints({ring});
+  assert.ok(points.length>=3);
+  let calls=0;
+  try{
+    globalThis.fetch=async()=>{
+      calls+=1;
+      if(calls===1)return {ok:true,json:async()=>fixture([row('corn',null,{status:'excluded'})])};
+      return {ok:true,json:async()=>fixture([row('corn',78)])};
+    };
+    const result=await fetchCropOptions({area:{ring},year:2025});
+    assert.equal(calls,2);
+    assert.equal(result.options[0].crop,'corn');
+    assert.equal(result.options[0].score,78);
+    assert.deepEqual(result.samplePoint,points[1]);
   }finally{globalThis.fetch=original;}
 });

@@ -13,6 +13,7 @@ from growwhere.service import analyze,source_status
 from growwhere.insights import analyze_point_insights
 from growwhere.planning import planning_readiness
 from growwhere.forecast import nws_forecast,forecast_evidence
+from growwhere.soil_forecast import openmeteo_soil_forecast,indicative_guidance
 from growwhere.agronomy import assess_agronomic_readiness
 from growwhere.sources import utcnow
 
@@ -47,20 +48,34 @@ class Handler(SimpleHTTPRequestHandler):
             if parsed.path=='/api/sources': return self.json(200,source_status())
             if parsed.path=='/api/planning-readiness':
                 bbox=get('bbox')
+                irrigation_system=get('irrigation_system')
+                crop_growth_stage=get('crop_growth_stage')
+                crop_variety=get('crop_variety')
                 value=planning_readiness(mode=get('mode','own_land'),crop=get('crop'),
                     lon=get('lon'),lat=get('lat'),
                     bbox=[float(v) for v in bbox.split(',')] if bbox is not None else None,
-                    target_year=get('target_year'),scale_ha=get('scale_ha'))
+                    target_year=get('target_year'),scale_ha=get('scale_ha'),
+                    irrigation_system=irrigation_system,crop_growth_stage=crop_growth_stage,crop_variety=crop_variety)
+                agronomic_rules=assess_agronomic_readiness(get('crop')) if get('crop') else None
                 if value['coverage']['status']=='supported' and get('lon') is not None:
-                    forecast=nws_forecast(get('lon'),get('lat'),refresh=get('refresh','0')=='1')
+                    refresh_flag=get('refresh','0')=='1'
+                    forecast=nws_forecast(get('lon'),get('lat'),refresh=refresh_flag)
+                    soil_fc=openmeteo_soil_forecast(get('lon'),get('lat'),refresh=refresh_flag)
                     value=planning_readiness(mode=get('mode','own_land'),crop=get('crop'),
                         lon=get('lon'),lat=get('lat'),target_year=get('target_year'),scale_ha=get('scale_ha'),
+                        irrigation_system=irrigation_system,crop_growth_stage=crop_growth_stage,crop_variety=crop_variety,
                         evidence={'validated_weather_forecast':forecast_evidence(forecast,get('target_year'))})
                     value['forecast']=forecast
+                    value['soil_forecast']=soil_fc
+                    value['indicative_guidance']=indicative_guidance(get('crop'),soil_fc,agronomic_rules,
+                        irrigation_system=irrigation_system,crop_growth_stage=crop_growth_stage,crop_variety=crop_variety)
                 else:
                     value['forecast']={'available':False,'data':None,'status':'point_required' if value['coverage']['status']=='supported' else 'outside_or_missing_coverage',
                         'reason':'Для погодного прогнозу оберіть точку в пілотній області Канзасу.','provenance':[]}
-                value['agronomic_rules']=assess_agronomic_readiness(get('crop')) if get('crop') else None
+                    value['soil_forecast']={'available':False,'data':None,'status':'point_required' if value['coverage']['status']=='supported' else 'outside_or_missing_coverage',
+                        'reason':'Для модельного прогнозу ґрунту оберіть точку в пілотній області Канзасу.','provenance':[]}
+                    value['indicative_guidance']=None
+                value['agronomic_rules']=agronomic_rules
                 return self.json(200,value)
             if parsed.path=='/api/analysis':
                 value=analyze([float(v) for v in get('bbox','-99,38,-97,39').split(',')],float(get('zoom','7')),get('crop','wheat'),int(get('year',str(dt.datetime.now().year-1))),get('planting','2025-05-01'),float(get('irrigation_mm','0')),get('irrigation_known','true')=='true',get('refresh','0')=='1')

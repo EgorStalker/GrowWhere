@@ -32,6 +32,9 @@ const state={
   plantingManual:false,
   irrigation:null,
   water:'',
+  irrigationSystem:null,
+  cropGrowthStage:null,
+  cropVariety:null,
   budget:'',
   large:false,
   drawerOpen:false,
@@ -343,7 +346,7 @@ function cropCard(crop) {
 }
 
 function welcomeScreen() {
-  return `<section class="welcome-stage" aria-labelledby="page-title"><div class="welcome-hero welcome-compact"><div class="welcome-copy"><p class="eyebrow">GrowWhere · RIGHTVERSION</p><h1 class="live-step-heading" id="page-title" tabindex="-1">Що вирощувати і де?</h1><p class="welcome-lead">Оберіть свій шлях. Порівнюємо ґрунти й історичний клімат на карті Канзасу, США.</p></div></div><div class="mode-options"><button type="button" class="mode-card" data-action="choose-mode" data-mode="own_land"><span class="step-num">01</span><h2>У мене є ділянка</h2><p>Позначте межі на карті, оберіть культуру та перевірте умови для цієї території.</p><b>Обрати мою ділянку →</b></button><button type="button" class="mode-card" data-action="choose-mode" data-mode="find_land"><span class="step-num">02</span><h2>Знайти придатні території</h2><p>Оберіть культуру й умови. Карта покаже історичну придатність зон.</p><b>Почати пошук →</b></button></div><aside class="planning-readiness"><strong>Перед аналізом</strong><p>Дата майбутньої сівби й рекомендований полив ще недоступні: бракує критичних даних про ґрунт і локальні умови. Історичний індекс — дослідницька оцінка.</p></aside></section>`;
+  return `<section class="welcome-stage" aria-labelledby="page-title"><div class="welcome-hero welcome-compact"><div class="welcome-copy"><p class="eyebrow">GrowWhere · RIGHTVERSION</p><h1 class="live-step-heading" id="page-title" tabindex="-1">Що вирощувати і де?</h1><p class="welcome-lead">Оберіть свій шлях. Порівнюємо ґрунти, історичний клімат NASA POWER та 7-денний прогноз у пілотній області Канзасу, США.</p></div></div><div class="mode-options"><button type="button" class="mode-card" data-action="choose-mode" data-mode="own_land"><span class="step-num">01</span><h2>У мене є ділянка</h2><p>Позначте межі на карті, оберіть культуру та перевірте умови для цієї території.</p><b>Обрати мою ділянку →</b></button><button type="button" class="mode-card" data-action="choose-mode" data-mode="find_land"><span class="step-num">02</span><h2>Знайти придатні території</h2><p>Оберіть культуру й умови. Карта покаже історичну придатність зон.</p><b>Почати пошук →</b></button></div><aside class="planning-readiness"><strong>Що доступно зараз</strong><p>Працює історична оцінка (NASA POWER · USDA SSURGO/CDL · економіка ERS) і 7-денний модельний прогноз погоди та ґрунту (NOAA NWS · Open-Meteo). На Кроці 4 ви можете уточнити тип поливу й фазу культури для розрахунку тижневого водного орієнтира.</p></aside></section>`;
 }
 function territoryFooterHtml() {
   const validation=validateTerritory(state);
@@ -357,7 +360,8 @@ function territoryScreen() {
 function cropOptionsHtml() {
   if(state.mode!=='own_land')return '<p class="drawer-note">Пошук зараз показує одну активну культуру на карті. Культуру можна змінити й порівняти результат.</p>';
   const data=state.cropOptions;
-  return `<section class="crop-help"><h2>Ще не визначилися з культурою?</h2><p>Можемо порівняти культури в опорній точці всередині вашого контуру: історичний сезон ${state.year}, природні опади, додатковий полив не підтверджено. Це попереднє порівняння, а не рекомендація майбутньої посадки.</p>${button(state.cropOptionsLoading?'Отримуємо дані…':'Допомогти обрати','crop-help','secondary',state.cropOptionsLoading)}${state.cropOptionsError?`<p role="status">${escape(state.cropOptionsError)}</p>`:''}${data?`${data.options.some(option=>option.eligible)?'':'<p>За наявними даними не вдалося знайти підтверджено придатні варіанти для цієї точки.</p>'}<p>${escape(data.scopeLabel)} · ${escape(String(data.period))}</p><div class="crop-option-list">${data.options.map(option=>`<button type="button" data-action="crop" data-crop="${escape(option.crop)}" class="crop-option"><b>${cropName(option.crop)}</b><span>${validNumber(option.score)?`${fmt(option.score)} / 100`:'Без даних'} · ${tr('statuses.'+option.status,'Без даних')}</span><small>${escape(option.sourceLabel||'NASA POWER · USDA SSURGO/CDL')} · історична оцінка</small><small>Витрати: ${unit(option.costPerHa,'$/га')} · ціна: ${unit(option.pricePerTonne,'$/т')} · ${escape(option.economicRegion||'регіон не визначено')} ${escape(option.economicYear||'рік не визначено')}</small>${option.localWarning?`<small class="local-crop-warning">${escape(option.localWarning)}</small>`:''}</button>`).join('')}</div><ul>${data.limitations.map(note=>`<li>${escape(note)}</li>`).join('')}</ul>${data.sourceUrls.map(url=>sourceLink(url,'Першоджерело')).join(' ')}`:''}</section>`;
+  const ptLabel=data?.samplePoint?` (${fmt(data.samplePoint.lat,4)}°, ${fmt(data.samplePoint.lon,4)}°)`:'';
+  return `<section class="crop-help"><h2>Ще не визначилися з культурою?</h2><p>Можемо порівняти культури в орній точці всередині вашого контуру: історичний сезон ${state.year}, природні опади. Це попереднє порівняння, а не рекомендація майбутньої посадки.</p>${button(state.cropOptionsLoading?'Отримуємо дані…':'Допомогти обрати','crop-help','secondary',state.cropOptionsLoading)}${state.cropOptionsError?`<p role="status">${escape(state.cropOptionsError)}</p>`:''}${data?`${data.options.some(option=>option.eligible)?'':'<p>За наявними даними не вдалося знайти підтверджено придатні орні варіанти в опорних точках цього контуру.</p>'}<p>${escape(data.scopeLabel)}${ptLabel} · ${escape(String(data.period))}</p><div class="crop-option-list">${data.options.map(option=>`<button type="button" data-action="crop" data-crop="${escape(option.crop)}" class="crop-option"><b>${cropName(option.crop)}</b><span>${validNumber(option.score)?`${fmt(option.score)} / 100`:'Без даних'} · ${tr('statuses.'+option.status,'Без даних')}</span><small>${escape(option.sourceLabel||'NASA POWER · USDA SSURGO/CDL')} · історична оцінка</small><small>Витрати: ${unit(option.costPerHa,'$/га')} · ціна: ${unit(option.pricePerTonne,'$/т')} · ${escape(option.economicRegion||'регіон не визначено')} ${escape(option.economicYear||'рік не визначено')}</small>${option.localWarning?`<small class="local-crop-warning">${escape(option.localWarning)}</small>`:''}</button>`).join('')}</div><ul>${data.limitations.map(note=>`<li>${escape(note)}</li>`).join('')}</ul>${data.sourceUrls.map(url=>sourceLink(url,'Першоджерело')).join(' ')}`:''}</section>`;
 }
 
 async function loadCropOptions() {
@@ -367,7 +371,7 @@ async function loadCropOptions() {
   const identity=JSON.stringify([state.customArea.ring,state.year]);
   state.cropOptionsLoading=true;state.cropOptionsError=null;stageRenderPreservingScroll();
   try{
-    const result=await fetchCropOptions({...target,year:state.year});
+    const result=await fetchCropOptions({area:state.customArea,...target,year:state.year});
     if(identity!==JSON.stringify([state.customArea?.ring,state.year]))return;
     state.cropOptions=result;
   }catch(error){state.cropOptionsError=error.message||'Не вдалося отримати порівняння. Можна обрати культуру зі списку нижче.';}
@@ -399,6 +403,39 @@ function cropScreen() {
   `;
 }
 
+function planningUserFieldsHtml() {
+  const sysOptions=[['drip','Крапельний (90%)'],['sprinkler','Дощування (80%)'],['furrow','Борозенний (60%)']];
+  const stageOptions=Object.entries(copy.cropGrowthStages||{});
+  const varietyOptions=Object.entries(copy.cropVarieties||{}).filter(([id])=>!['winter','spring'].includes(id)||['wheat','barley'].includes(state.crop));
+  return `
+    <div class="planning-user-fields">
+      <div class="live-field">
+        <strong>Параметри господарства для 7-денного орієнтира (необов’язково)</strong>
+        <small>Допомагає розрахувати тижневий водний орієнтир на основі прогнозу ET0 й зменшити кількість невідомих параметрів.</small>
+      </div>
+      ${state.irrigation==='yes'?`
+        <div class="live-field">
+          <label>Тип системи поливу</label>
+          <div class="water-presets" role="group" aria-label="Тип системи поливу">
+            ${sysOptions.map(([id,label])=>`<button type="button" class="preset-chip ${state.irrigationSystem===id?'active':''}" data-action="irrigation-system" data-value="${id}" aria-pressed="${state.irrigationSystem===id}">${label}</button>`).join('')}
+          </div>
+        </div>`:''}
+      <div class="live-field">
+        <label>Поточна фаза культури</label>
+        <div class="water-presets" role="group" aria-label="Поточна фаза культури">
+          ${stageOptions.map(([id,label])=>`<button type="button" class="preset-chip ${state.cropGrowthStage===id?'active':''}" data-action="growth-stage" data-value="${id}" aria-pressed="${state.cropGrowthStage===id}">${label}</button>`).join('')}
+        </div>
+      </div>
+      <div class="live-field">
+        <label>Форма / група стиглості</label>
+        <div class="water-presets" role="group" aria-label="Форма або група стиглості">
+          ${varietyOptions.map(([id,label])=>`<button type="button" class="preset-chip ${state.cropVariety===id?'active':''}" data-action="crop-variety" data-value="${id}" aria-pressed="${state.cropVariety===id}">${label}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function irrigationScreen() {
   state.conditionsInputInvalid=false;
   const validation=validateConditions(state);
@@ -408,13 +445,14 @@ function irrigationScreen() {
       <button type="button" class="link-button" data-action="go-crops">← Змінити культуру (${cropName(state.crop)})</button>
       <p class="eyebrow">КРОК 4 · МАСШТАБИ ТА УМОВИ</p>
       <h1 class="live-step-heading" id="page-title" tabindex="-1">Які умови вирощування?</h1>
-      <p class="lead">Оберіть режим поливу та період спостережень. Ці налаштування допомагають повторити історичний розрахунок і не є планом посадки.</p>
+      <p class="lead">Оберіть режим поливу та період спостережень. Ці налаштування допомагають повторити історичний розрахунок і сформувати 7-денний орієнтир.</p>
       ${planningReadinessHtml()}
       <div class="wizard-card">
         <div class="live-form">
           <div class="live-field"><label for="scale-ha">Площа вирощування, га</label>${state.mode==='own_land'?`<p class="area-value">${formatArea(geodesicAreaHa(state.customArea?.ring))} · за вашим контуром</p>`:`<input id="scale-ha" type="number" inputmode="decimal" min="0.01" step="any" value="${escape(state.scaleHa)}" placeholder="Наприклад, 25" required><small>Бажана площа для пошуку; не підтверджує наявність вільної ділянки такого розміру.</small>`}</div>
           ${irrigationFields()}
-          <div class="live-field"><label for="target-year">Майбутній сезон для перевірки даних (необов’язково)</label><input id="target-year" type="number" min="${currentYear}" max="2100" step="1" value="${escape(state.targetYear)}" placeholder="Рік, наприклад ${currentYear+1}"><small>Це окремий параметр перевірки. Прогноз обмежений найближчими днями, а дата посадки й норма поливу ще недоступні.</small></div>
+          ${planningUserFieldsHtml()}
+          <div class="live-field"><label for="target-year">Майбутній сезон для перевірки даних (необов’язково)</label><input id="target-year" type="number" min="${currentYear}" max="2100" step="1" value="${escape(state.targetYear)}" placeholder="Рік, наприклад ${currentYear+1}"><small>Окремий параметр перевірки горизонту даних на етапі результатів.</small></div>
           <details class="historical-settings"><summary>Історичний період для карти · ${state.year}</summary><p>Карта порівнює минулі умови. Параметри нижче не визначають майбутньої сівби.</p>
           <div class="live-inline-fields">
             <div class="live-field">
@@ -474,7 +512,9 @@ function areaBreakdownHtml(summary) {
   const items=[['good','Підходить'],['conditional','Є обмеження'],['poor','Не підходить'],['unknown','Без даних'],['excluded','Поза аналізом']]
     .filter(([key])=>(summary.counts?.[key]||0)>0);
   if(!items.length)return '';
-  return `<div class="live-area-breakdown">${items.map(([key,label])=>`<span class="live-breakdown-chip"><i style="background:${STATUS_COLORS[key]}" aria-hidden="true"></i>${label}: <b>${fmt(summary.counts[key])}</b></span>`).join('')}</div>`;
+  const cov=validNumber(summary.coveragePct)&&summary.coveragePct<100&&summary.score!==null
+    ?`<p class="drawer-note" style="margin:6px 0 0">Покриття: оцінено <b>${fmt(summary.coveragePct)}%</b> площі контуру; зони без повного профілю не обнуляють оцінку решти поля.</p>`:'';
+  return `<div class="live-area-breakdown">${items.map(([key,label])=>`<span class="live-breakdown-chip"><i style="background:${STATUS_COLORS[key]}" aria-hidden="true"></i>${label}: <b>${fmt(summary.counts[key])}</b></span>`).join('')}</div>${cov}`;
 }
 
 function activeInsightTarget() {
@@ -493,7 +533,8 @@ function insightKey(target) {
 }
 
 function planningKey(target) {
-  return target?`${Number(target.lon).toFixed(5)},${Number(target.lat).toFixed(5)}|${state.crop}|${state.mode}|${state.targetYear}|${state.scaleHa}`:'';
+  const ctx=planningContext(state);
+  return target?`${Number(target.lon).toFixed(5)},${Number(target.lat).toFixed(5)}|${state.crop}|${state.mode}|${state.targetYear}|${state.scaleHa}|${ctx.irrigationSystem||''}|${ctx.cropGrowthStage||''}|${ctx.cropVariety||''}`:'';
 }
 
 async function loadPlanningReadiness(refresh=false) {
@@ -508,8 +549,12 @@ async function loadPlanningReadiness(refresh=false) {
   const identity=++planningRequestId;
   planningLoadingKey=key;planningErrorKey=null;
   renderDrawer();
-  const params=new URLSearchParams({mode:state.mode,crop:state.crop,lon:String(target.lon),lat:String(target.lat),refresh:refresh?'1':'0',scale_ha:String(planningContext(state).scaleHa)});
+  const ctx=planningContext(state);
+  const params=new URLSearchParams({mode:state.mode,crop:state.crop,lon:String(target.lon),lat:String(target.lat),refresh:refresh?'1':'0',scale_ha:String(ctx.scaleHa)});
   if(state.targetYear)params.set('target_year',String(state.targetYear));
+  if(ctx.irrigationSystem)params.set('irrigation_system',ctx.irrigationSystem);
+  if(ctx.cropGrowthStage)params.set('crop_growth_stage',ctx.cropGrowthStage);
+  if(ctx.cropVariety)params.set('crop_variety',ctx.cropVariety);
   try{
     const response=await fetch(`/api/planning-readiness?${params}`,{signal:planningController.signal});
     const data=await response.json();
@@ -524,17 +569,42 @@ async function loadPlanningReadiness(refresh=false) {
   if(state.step===5&&state.drawerOpen)renderDrawer();
 }
 
+function soilForecastHtml(data) {
+  const sf=data?.soil_forecast;
+  const guide=data?.indicative_guidance;
+  if(!sf)return '';
+  if(!sf.available||!sf.data)return `<span>Модельний прогноз ґрунту (Open-Meteo): ${escape(sf.reason||'недоступно.')}</span>`;
+  const d=sf.data;
+  const moistPct=v=>validNumber(v)?`${fmt(v*100,0)}%`:'—';
+  const soilCheck=guide?.sowing_soil_check?.summary?`<span>${escape(guide.sowing_soil_check.summary)}</span>`:'';
+  const irr=guide?.irrigation_7d_guidance;
+  const irrHtml=irr?(
+    irr.status==='calculated_with_user_params'
+      ? `<span><b>7-денний орієнтир поливу (за вашою фазою й системою)</b><br>ET0 7 дн.: ${fmt(irr.et0_7d_mm,1)} мм · культура ETc (Kc=${fmt(irr.kc_used,2)}): ${fmt(irr.crop_etc_7d_mm,1)} мм · еф. опади: ${fmt(irr.effective_rain_7d_mm,1)} мм<br>Чистий дефіцит: <b>${fmt(irr.net_deficit_7d_mm,1)} мм</b>${validNumber(irr.gross_irrigation_7d_mm)?` · рекомендовано подати (ККД ${fmt(irr.system_efficiency*100,0)}%): <b>${fmt(irr.gross_irrigation_7d_mm,1)} мм</b>`:' (режим без поливу)'}</span>`
+      : `<span><b>7-денний водний баланс ET0 (Open-Meteo)</b><br>Сумарне ET0: ${fmt(irr.et0_7d_mm,1)} мм · опади: ${fmt(irr.precipitation_7d_mm,1)} мм · орієнтовний дефіцит (Kc=${fmt(irr.kc_used,2)}): <b>${fmt(irr.net_deficit_7d_mm,1)} мм</b>.<br><small>Вкажіть фазу культури та тип поливу на Кроці 4 для точнішого перерахунку з урахуванням ККД.</small></span>`
+  ):'';
+  return `
+    <span><b>Стан ґрунту · Open-Meteo (модельна сітка ~9–11 км, 7 дн.)</b><br>
+    Темп. ґрунту зараз: 6 см <b>${validNumber(d.current_soil_temp_6cm_c)?`${fmt(d.current_soil_temp_6cm_c,1)} °C`:'—'}</b> · поверхня ${validNumber(d.current_soil_temp_0cm_c)?`${fmt(d.current_soil_temp_0cm_c,1)} °C`:'—'}<br>
+    Діапазон 6 см (3 дн. мін / 7 дн. макс): ${validNumber(d.soil_temp_6cm_next_3d_min_c)?`${fmt(d.soil_temp_6cm_next_3d_min_c,1)}`:'—'} … ${validNumber(d.soil_temp_6cm_7d_max_c)?`${fmt(d.soil_temp_6cm_7d_max_c,1)}`:'—'} °C<br>
+    Вологість (об’ємна): 0–1 см ${moistPct(d.current_soil_moisture_0_1_m3m3)} · 3–9 см ${moistPct(d.current_soil_moisture_3_9_m3m3)} · 9–27 см ${moistPct(d.current_soil_moisture_9_27_m3m3)}</span>
+    ${soilCheck}
+    ${irrHtml}
+    ${(sf.provenance||[]).map(meta=>sourceLink(meta.source_url,'Джерело Open-Meteo')).join(' ')}
+  `;
+}
+
 function pointPlanningHtml() {
   const key=planningKey(activeInsightTarget());
   if(!key)return '';
   const data=planningCache.get(key)?.data;
-  if(!data)return `<section class="drawer-sub planning-point"><strong>Актуальні умови для планування</strong><span>${planningLoadingKey===key?'Отримуємо прогноз і перевіряємо наявність правил…':planningErrorKey===key?'Прогноз і правила зараз недоступні. Дату посадки й норму поливу не визначено.':'Дату посадки й норму поливу поки не визначено.'}</span>${planningErrorKey===key?button('Оновити прогноз','reload-planning'):''}</section>`;
+  if(!data)return `<section class="drawer-sub planning-point"><strong>Актуальні умови для планування</strong><span>${planningLoadingKey===key?'Отримуємо прогноз повітря NWS, ґрунт Open-Meteo та правила…':planningErrorKey===key?'Прогноз і правила зараз недоступні.':'Очікуємо оновлення даних…'}</span>${planningErrorKey===key?button('Оновити прогноз','reload-planning'):''}</section>`;
   const forecast=forecastOverview(data.forecast);
   const forecastSources=(data.forecast?.provenance||[]).map(meta=>sourceLink(meta.source_url,'Джерело NOAA/NWS')).join(' ');
-  const forecastHtml=forecast?`<span><b>NOAA/NWS · найближчі 24 години</b><br>Температура повітря: ${formatRange(forecast.temperatureRangeC,' °C',1)}<br>Найбільша погодинна ймовірність опадів: ${forecast.maxRainProbabilityPct===null?'Без даних':`${fmt(forecast.maxRainProbabilityPct)}%`}<br>Випущено: ${dateTime(forecast.issuedAt)}<br>Прогноз діє до: ${dateTime(forecast.validTo)}<br>Дати й час показано в часовому поясі вашого пристрою.</span>${forecastSources}`:`<span>Актуальний прогноз: ${escape(data.forecast?.reason||'Без даних для цієї точки.')}</span>`;
+  const forecastHtml=forecast?`<span><b>NOAA/NWS · повітря, найближчі 24 години</b><br>Температура повітря: ${formatRange(forecast.temperatureRangeC,' °C',1)}<br>Найбільша погодинна ймовірність опадів: ${forecast.maxRainProbabilityPct===null?'Без даних':`${fmt(forecast.maxRainProbabilityPct)}%`}<br>Випущено: ${dateTime(forecast.issuedAt)} · діє до ${dateTime(forecast.validTo)}</span>${forecastSources}`:`<span>Прогноз повітря NWS: ${escape(data.forecast?.reason||'Без даних для цієї точки.')}</span>`;
   const rule=agronomicRuleOverview(data.agronomic_rules);
-  const ruleHtml=rule?`<span><b>Місцеві правила · ${cropName(state.crop)}</b><br>${rule.localGuideDiscouragesCrop?'Місцевий посібник не рекомендує цей тип культури для регіону.<br>':''}${rule.temperatureRangeC?`Опублікований мінімум температури ґрунту: ${formatRange(rule.temperatureRangeC,' °C',1)}${rule.depthCm===null?'':` на глибині ${fmt(rule.depthCm,2)} см`}. Це довідковий поріг, а не вимірювання поточного стану ґрунту.`:'Перевіреного температурного порогу для автоматичної оцінки немає.'}${rule.verifiedAt?`<br>Джерело перевірено: ${escape(rule.verifiedAt)}`:''}</span>${sourceLink(rule.sourceUrl,'Правила K-State')}`:'<span>Місцеві агрономічні правила: без даних.</span>';
-  return `<section class="drawer-sub planning-point"><strong>Актуальні умови для планування</strong><span>${state.selected?'Прогноз для центра вибраної зони.':'Прогноз лише для опорної точки всередині контуру.'} Це оцінка погодної сітки, а не вимірювання на полі.</span>${forecastHtml}${ruleHtml}<span>Дата посадки та норма поливу поки не визначені. Прогноз і правила самі по собі не є порадою для цього поля.</span>${data.critical_gaps?.length?`<details><summary>Чого ще бракує (${data.critical_gaps.length})</summary><ul class="live-missing-list">${data.critical_gaps.map(gap=>`<li>${escape(gap.message)}</li>`).join('')}</ul></details>`:''}${button('Оновити перевірку','reload-planning')}</section>`;
+  const ruleHtml=rule?`<span><b>Місцеві правила · ${cropName(state.crop)}</b><br>${rule.localGuideDiscouragesCrop?'Місцевий посібник застерігає щодо ярої форми цієї культури для Канзасу.<br>':''}${rule.temperatureRangeC?`Опублікований мінімум температури ґрунту: ${formatRange(rule.temperatureRangeC,' °C',1)}${rule.depthCm===null?'':` на глибині ${fmt(rule.depthCm,2)} см`}.`:'Перевіреного температурного порогу для автоматичної оцінки немає.'}${rule.verifiedAt?`<br>Джерело перевірено: ${escape(rule.verifiedAt)}`:''}</span>${sourceLink(rule.sourceUrl,'Правила K-State')}`:'<span>Місцеві агрономічні правила: без даних.</span>';
+  return `<section class="drawer-sub planning-point"><strong>Актуальні умови й 7-денний орієнтир</strong><span>${state.selected?'Дані для центра вибраної зони.':'Дані для опорної точки контуру.'} Модельна сітка — орієнтир, а не датчик на полі.</span>${forecastHtml}${soilForecastHtml(data)}${ruleHtml}${data.critical_gaps?.length?`<details><summary>Чого ще бракує для повної польової автоматизації (${data.critical_gaps.length})</summary><ul class="live-missing-list">${data.critical_gaps.map(gap=>`<li>${escape(gap.message)}</li>`).join('')}</ul></details>`:''}${button('Оновити перевірку','reload-planning')}</section>`;
 }
 
 async function loadPointInsights(refresh=false) {
@@ -583,7 +653,8 @@ function uncertaintyBoxHtml(uncertainty) {
   if(!uncertainty)return '';
   const range=uncertainty.score_range?`${fmt(uncertainty.score_range[0],0)}–${fmt(uncertainty.score_range[1],0)}`:'—';
   const agPct=validNumber(uncertainty.ag_share)?`${Math.round(uncertainty.ag_share*100)}%`:'—';
-  return `<div class="drawer-sub uncertainty-box"><strong>Невизначеність оглядової сітки (${fmt(uncertainty.sample_count)} точок)</strong><span>Розкид балів: <b>${range}</b> · с/г покрив у вибірці (CDL): <b>${agPct}</b> (${fmt(uncertainty.scored_samples)} оцінено, ${fmt(uncertainty.excluded_samples)} поза аналізом, ${fmt(uncertainty.unknown_samples)} без даних)</span></div>`;
+  const covPct=validNumber(uncertainty.coverage_ratio)?` · покриття: <b>${Math.round(uncertainty.coverage_ratio*100)}%</b>`:'';
+  return `<div class="drawer-sub uncertainty-box"><strong>Невизначеність оглядової сітки (${fmt(uncertainty.sample_count)} точок)</strong><span>Розкид балів: <b>${range}</b> · с/г покрив (CDL): <b>${agPct}</b>${covPct} (${fmt(uncertainty.scored_samples)} оцінено, ${fmt(uncertainty.excluded_samples)} поза аналізом, ${fmt(uncertainty.unknown_samples)} без даних)</span></div>`;
 }
 
 function scalesContextHtml() {
@@ -1276,6 +1347,24 @@ document.addEventListener('click',event=>{
     state.validationError=null;
     if(state.step===4){renderProgress();document.getElementById('flow-stage').innerHTML=irrigationScreen();}
     else if(state.step===5){syncTopbarControls();loadAnalysis();}
+  }else if(action==='irrigation-system'){
+    const val=target.dataset.value;
+    state.irrigationSystem=state.irrigationSystem===val?null:val;
+    planningCache.clear();
+    if(state.step===4)stageRenderPreservingScroll();
+    else if(state.step===5)loadPlanningReadiness(false);
+  }else if(action==='growth-stage'){
+    const val=target.dataset.value;
+    state.cropGrowthStage=state.cropGrowthStage===val?null:val;
+    planningCache.clear();
+    if(state.step===4)stageRenderPreservingScroll();
+    else if(state.step===5)loadPlanningReadiness(false);
+  }else if(action==='crop-variety'){
+    const val=target.dataset.value;
+    state.cropVariety=state.cropVariety===val?null:val;
+    planningCache.clear();
+    if(state.step===4)stageRenderPreservingScroll();
+    else if(state.step===5)loadPlanningReadiness(false);
   }else if(action==='basemap'){
     state.baseMap=target.dataset.mode==='osm'?'osm':'satellite';
     setBaseLayer(state.baseMap);
@@ -1323,7 +1412,7 @@ document.addEventListener('click',event=>{
   else if(action==='close-drawer'){state.drawerOpen=false;state.selected=null;clearSelectedFeature();renderDrawer();renderAreaBanner();}
   else if(action==='toggle-drawer'){state.drawerOpen=!state.drawerOpen;renderDrawer();renderAreaBanner();}
   else if(action==='toggle-area-display'){state.areaDisplay=state.areaDisplay==='solid'?'zones':'solid';setAreaDisplayMode(state.areaDisplay);renderAreaBanner();renderDrawer();}
-  else if(action==='refresh'){analysisCache.clear();insightsCache.clear();loadAnalysis(true);loadEconomics(true);loadSources();if(state.drawerOpen&&state.drawerTab!=='overview')loadPointInsights(true);}
+  else if(action==='refresh'){analysisCache.clear();insightsCache.clear();planningCache.clear();loadAnalysis(true);loadEconomics(true);loadSources();if(state.drawerOpen){loadPlanningReadiness(true);if(state.drawerTab!=='overview')loadPointInsights(true);}}
   else if(action==='text-size'){state.large=!state.large;document.body.classList.toggle('large-text',state.large);target.setAttribute('aria-pressed',String(state.large));resizeMap();}
   else if(['help','compare','formula','sources'].includes(action)){
     if(action==='sources'&&!state.sources)loadSources().then(()=>renderDialog('sources'));

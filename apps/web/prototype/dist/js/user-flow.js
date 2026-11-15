@@ -113,5 +113,8 @@ export function planningContext(state){
     areaSource:state.mode==='own_land'?'geometry':'user_desired_scale',
     targetYear:conditions.targetYear??null,historicalYear:conditions.historicalYear??null,
     planting:conditions.planting??null,
-    irrigationMm:conditions.water?.amountMm??null,irrigationKnown:conditions.water?.known??false};
+    irrigationMm:conditions.water?.amountMm??null,irrigationKnown:conditions.water?.known??false,
+    irrigationSystem:state.irrigation==='no'?'none':(state.irrigationSystem||null),
+    cropGrowthStage:state.cropGrowthStage||null,
+    cropVariety:state.cropVariety||null};
 }
