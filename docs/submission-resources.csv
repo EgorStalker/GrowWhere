@@ -16,6 +16,7 @@ Space agency partner and other data/resources,Leaflet 1.9.4,https://leafletjs.co
 Space agency partner and other data/resources,Python,https://www.python.org/,"API, source processing, numerical method and report generation."
 Space agency partner and other data/resources,SQLite / RTree,https://www.sqlite.org/rtree.html,Prepared map storage and spatial lookups.
 Space agency partner and other data/resources,Matplotlib,https://matplotlib.org/,PDF rendering and comparison/factor charts; runtime dependencies are installed by the pinned requirement.
+Space agency partner and other data/resources,ReportLab,https://docs.reportlab.com/,Static seven-slide demonstration PDF assembled from the verified slide renders; not required by the running site.
 Space agency partner and other data/resources,DejaVu Fonts,https://dejavu-fonts.github.io/License.html,Fonts used in the analytical PDF reports; accompanying notice is preserved.
 Space agency partner and other data/resources,Arial font family,https://learn.microsoft.com/en-us/typography/font-list/arial,System font referenced by the updated presentation; no separate font file is distributed.
 Space agency partner and other data/resources,Node.js,https://nodejs.org/,JavaScript checks and the optional development launcher.

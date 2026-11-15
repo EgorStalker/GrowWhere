@@ -16,9 +16,7 @@ https://github.com/EgorStalker/GrowWhere
 
 https://github.com/EgorStalker/GrowWhere/blob/main/deliverables/GrowWhere-demo/GrowWhere-demo.pdf
 
-Publication status: the demonstration is being prepared; the URL above is the
-intended destination and is not ready for submission yet. The final
-demonstration will contain 7 slides, including the title and introduction.
+The demonstration contains 7 slides, including the title and introduction.
 The longer analytical report produced by the app is a separate document and is
 not the demonstration file for this field.
 

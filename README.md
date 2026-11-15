@@ -13,9 +13,8 @@ supports North American navigation; unprepared areas and scenarios show **No dat
 
 ## Demo and submission
 
-- The public 7-slide demonstration and editable presentation are being prepared
-  in [the demo folder](deliverables/GrowWhere-demo/). The first four supplied
-  slides are retained; only slides 5–7 are being updated.
+- [Public demonstration: 7 slides, including title and introduction](https://github.com/EgorStalker/GrowWhere/blob/main/deliverables/GrowWhere-demo/GrowWhere-demo.pdf)
+- [Presentation file](https://github.com/EgorStalker/GrowWhere/blob/main/deliverables/GrowWhere-demo/GrowWhere-demo.pptx)
 - [Project summary and details for the submission form](docs/submission.en.md)
 - [NASA and other resources, with full public URLs](docs/submission-resources.md)
 - [Updated slide 5–7 copy and screenshots](deliverables/GrowWhere-demo/slide-copy.md)

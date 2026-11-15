@@ -34,6 +34,7 @@ NASA endorsement or validation of GrowWhere's scoring method.
 | Python | https://www.python.org/ | API, source processing, numerical method and report generation. |
 | SQLite / RTree | https://www.sqlite.org/rtree.html | Prepared map storage and spatial lookups. |
 | Matplotlib | https://matplotlib.org/ | PDF rendering and comparison/factor charts; runtime dependencies are installed by the pinned requirement. |
+| ReportLab | https://docs.reportlab.com/ | Static seven-slide demonstration PDF assembled from the verified slide renders; not required by the running site. |
 | DejaVu Fonts | https://dejavu-fonts.github.io/License.html | Fonts used in the analytical PDF reports; accompanying notice is preserved. |
 | Arial font family | https://learn.microsoft.com/en-us/typography/font-list/arial | System font referenced by the updated presentation; no separate font file is distributed. |
 | Node.js | https://nodejs.org/ | JavaScript checks and the optional development launcher. |
