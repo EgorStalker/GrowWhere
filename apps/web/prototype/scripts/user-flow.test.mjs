@@ -49,9 +49,9 @@ test('empty, open, repeated, collinear, self-crossing and malformed rings block 
   assert.equal(validateTerritory({...own(),customArea:{bbox:[-98,38,-97,39]}}).valid,false);
 });
 
-test('every polygon vertex must lie in Kansas; misleading bbox cannot hide outside geometry',()=>{
+test('every polygon vertex must lie in the North America map domain; misleading bbox cannot hide outside geometry',()=>{
   const state=own();
-  state.customArea.ring[2]=[-93,38.01];
+  state.customArea.ring[2]=[0,38.01];
   state.customArea.bbox=[-98,38,-97.99,38.01];
   assert.equal(validateTerritory(state).code,'outside_coverage');
   state.customArea=own().customArea;
@@ -61,13 +61,13 @@ test('every polygon vertex must lie in Kansas; misleading bbox cannot hide outsi
   assert.equal(validateTerritory(state).valid,true);
 });
 
-test('find-land starts with explicit Kansas selection and required desired scale in hectares',()=>{
+test('find-land starts with explicit North America selection and required desired scale in hectares',()=>{
   const state=search();
   state.searchRegion=null;
   assert.equal(canEnterStep(state,3),false);
   state.searchRegion='ukraine';
   assert.equal(canEnterStep(state,3),false);
-  state.searchRegion='kansas';
+  state.searchRegion='north-america';
   assert.equal(canEnterStep(state,3),true);
   state.scaleHa='';
   assert.equal(canEnterStep(state,4),true);
@@ -78,7 +78,7 @@ test('find-land starts with explicit Kansas selection and required desired scale
   assert.equal(context.scaleHa,12.5);
   assert.equal(context.areaSource,'user_desired_scale');
   assert.equal(context.ring,null);
-  assert.deepEqual(context.bbox,[-102.1,36.9,-94.5,40.1]);
+  assert.deepEqual(context.bbox,[-180,5,-10,84]);
   assert.equal('availableLandHa' in context,false);
 });
 
@@ -146,7 +146,7 @@ test('edits recompute gates and planning context while preserving shared inputs'
   assert.equal(canEnterStep(state,5),false);
   assert.equal(state.crop,'soy');
   assert.equal(state.irrigation,original.irrigation);
-  state.mode='find_land';state.searchRegion='kansas';state.scaleHa='10';
+  state.mode='find_land';state.searchRegion='north-america';state.scaleHa='10';
   assert.equal(canEnterStep(state,5),true);
   assert.equal(planningContext(state).mode,'find_land');
   assert.equal(original.customArea.ring.length,5);

@@ -44,7 +44,7 @@ test('unknown economics and genuine zero costs remain distinct with their own ye
   assert.equal(data.options[0].economicYear,2024);
   assert.equal(data.options[0].economicRegion,'Prairie Gateway');
   assert.equal(data.options.find(r=>r.crop==='soy').costPerHa,null);
-  assert.throws(()=>normalizeCropOptions(fixture([]),2024),/іншого періоду/);
+  assert.throws(()=>normalizeCropOptions(fixture([]),2024),/different period/);
 });
 
 test('comparison request uses an explicit historical rainfed preview without mutating a crop choice',async()=>{
@@ -61,7 +61,7 @@ test('comparison request uses an explicit historical rainfed preview without mut
     assert.equal(query.get('planting'),'2025-05-01');
     assert.equal(called.options.signal,controller.signal);
     called=null;
-    await assert.rejects(fetchCropOptions({lon:0,lat:0,year:2025}),/Канзасу/);
+    await assert.rejects(fetchCropOptions({lon:0,lat:0,year:2025}),/Kansas/);
     assert.equal(called,null);
   }finally{globalThis.fetch=original;}
 });

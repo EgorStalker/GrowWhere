@@ -9,13 +9,13 @@ METHOD_VERSION = 'growwhere-screening-0.2'
 # Kc values/stage lengths: FAO-56 tables 11/12. Temperature envelopes, weights,
 # slope and texture responses are exposed working assumptions, not FAO ratings.
 PROFILES = {
-    'wheat': {'name':'Яра пшениця','stages':[20,25,60,30], 'kc':[0.3,1.15,0.3], 'temperature':[0,12,24,36], 'ph':[4.5,5.5,7,8.5], 'frost':-3,'heat':35, 'default_planting':'03-15'},
-    'soy': {'name':'Соя','stages':[20,35,60,25], 'kc':[0.4,1.15,0.5], 'temperature':[8,20,30,40], 'ph':[4.5,6,7,8.5], 'frost':0,'heat':36, 'default_planting':'05-01'},
-    'corn': {'name':'Кукурудза','stages':[30,40,50,30], 'kc':[0.3,1.2,0.35], 'temperature':[8,18,30,42], 'ph':[4.5,6,7,8.5], 'frost':0,'heat':36, 'default_planting':'05-01'},
-    'sorghum': {'name':'Сорго','stages':[20,35,45,30], 'kc':[0.3,1.05,0.55], 'temperature':[10,20,32,43], 'ph':[5.0,5.8,7.5,8.5], 'frost':0,'heat':39, 'default_planting':'05-15'},
-    'barley': {'name':'Ярий ячмінь','stages':[20,25,50,30], 'kc':[0.3,1.15,0.25], 'temperature':[0,11,23,36], 'ph':[5.0,6.0,7.8,8.5], 'frost':-3,'heat':35, 'default_planting':'03-15'},
-    'oats': {'name':'Овес','stages':[20,30,50,30], 'kc':[0.3,1.15,0.25], 'temperature':[0,10,22,35], 'ph':[4.5,5.5,7.2,8.2], 'frost':-3,'heat':34, 'default_planting':'03-15'},
-    'cotton': {'name':'Бавовник','stages':[30,50,55,45], 'kc':[0.35,1.18,0.6], 'temperature':[12,22,33,44], 'ph':[5.0,5.8,7.8,8.5], 'frost':0,'heat':39, 'default_planting':'04-20'},
+    'wheat': {'name':'Spring wheat','stages':[20,25,60,30], 'kc':[0.3,1.15,0.3], 'temperature':[0,12,24,36], 'ph':[4.5,5.5,7,8.5], 'frost':-3,'heat':35, 'default_planting':'03-15'},
+    'soy': {'name':'Soybeans','stages':[20,35,60,25], 'kc':[0.4,1.15,0.5], 'temperature':[8,20,30,40], 'ph':[4.5,6,7,8.5], 'frost':0,'heat':36, 'default_planting':'05-01'},
+    'corn': {'name':'Corn','stages':[30,40,50,30], 'kc':[0.3,1.2,0.35], 'temperature':[8,18,30,42], 'ph':[4.5,6,7,8.5], 'frost':0,'heat':36, 'default_planting':'05-01'},
+    'sorghum': {'name':'Sorghum','stages':[20,35,45,30], 'kc':[0.3,1.05,0.55], 'temperature':[10,20,32,43], 'ph':[5.0,5.8,7.5,8.5], 'frost':0,'heat':39, 'default_planting':'05-15'},
+    'barley': {'name':'Spring barley','stages':[20,25,50,30], 'kc':[0.3,1.15,0.25], 'temperature':[0,11,23,36], 'ph':[5.0,6.0,7.8,8.5], 'frost':-3,'heat':35, 'default_planting':'03-15'},
+    'oats': {'name':'Oats','stages':[20,30,50,30], 'kc':[0.3,1.15,0.25], 'temperature':[0,10,22,35], 'ph':[4.5,5.5,7.2,8.2], 'frost':-3,'heat':34, 'default_planting':'03-15'},
+    'cotton': {'name':'Cotton','stages':[30,50,55,45], 'kc':[0.35,1.18,0.6], 'temperature':[12,22,33,44], 'ph':[5.0,5.8,7.8,8.5], 'frost':0,'heat':39, 'default_planting':'04-20'},
 }
 WEIGHTS = {'temperature':.20,'water':.30,'ph':.15,'awc':.10,'drainage':.10,'slope':.10,'texture':.05}
 DRAINAGE = {'Excessively drained':.65,'Somewhat excessively drained':.8,'Well drained':1.,'Moderately well drained':.85,'Somewhat poorly drained':.55,'Poorly drained':.25,'Very poorly drained':0.}

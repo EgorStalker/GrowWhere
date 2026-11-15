@@ -12,13 +12,13 @@ from .sources import power_point, utcnow
 from . import landcover, soil
 
 ROTATION_META = {
-    'soy': {'group': 'legume', 'group_label': 'Бобові (азотфіксатор)', 'benefit': 'Збагачує ґрунт азотом і розриває цикл хвороб зернових.'},
-    'wheat': {'group': 'cereal_cool', 'group_label': 'Колосові прохолодного сезону', 'benefit': 'Закриває поверхню від ерозії й використовує весняну вологу.'},
-    'barley': {'group': 'cereal_cool', 'group_label': 'Колосові прохолодного сезону', 'benefit': 'Коротший сезон, швидше звільняє поле й краще тримає помірну сухість.'},
-    'oats': {'group': 'cereal_cool', 'group_label': 'Колосові прохолодного сезону', 'benefit': 'Оздоровлює кореневу зону та знижує ризик ґрунтових патогенів.'},
-    'corn': {'group': 'cereal_warm', 'group_label': 'Інтенсивні теплолюбні зернові', 'benefit': 'Максимально реалізує вологу й родючість, але потребує багато води й азоту.'},
-    'sorghum': {'group': 'drought_cereal', 'group_label': 'Посухостійкі просапні', 'benefit': 'Глибока коренева система, економить воду в спекотні та сухі роки.'},
-    'cotton': {'group': 'fiber_warm', 'group_label': 'Теплолюбні технічні', 'benefit': 'Добре переносить спеку за достатнього тепла й помірного поливу.'},
+    'soy': {'group': 'legume', 'group_label': 'Legume (nitrogen fixer)', 'benefit': 'Can contribute nitrogen and interrupt cereal disease cycles.'},
+    'wheat': {'group': 'cereal_cool', 'group_label': 'Cool-season cereal', 'benefit': 'Provides soil cover and uses spring moisture.'},
+    'barley': {'group': 'cereal_cool', 'group_label': 'Cool-season cereal', 'benefit': 'A shorter season can free the field earlier; performance depends on local conditions.'},
+    'oats': {'group': 'cereal_cool', 'group_label': 'Cool-season cereal', 'benefit': 'Crop diversity may help interrupt soil-borne disease cycles.'},
+    'corn': {'group': 'cereal_warm', 'group_label': 'Warm-season cereal', 'benefit': 'Can use available water and nutrients intensively, with substantial water and nitrogen demand.'},
+    'sorghum': {'group': 'drought_cereal', 'group_label': 'Drought-tolerant row crop', 'benefit': 'A deep root system can support performance in hot, dry conditions.'},
+    'cotton': {'group': 'fiber_warm', 'group_label': 'Warm-season industrial crop', 'benefit': 'Requires a long warm season; water needs depend on local conditions.'},
 }
 
 
@@ -171,7 +171,7 @@ def _multi_year_risk(support_key, pt_soil, crop, year, planting_mm_dd, irrigatio
             'rain_min_mm': round(min(rains), 0) if rains else None,
             'rain_max_mm': round(max(rains), 0) if rains else None,
         },
-        'note': 'Історичний ризик за даними NASA POWER для вибраних умов поливу (не прогноз урожайності).',
+        'note': 'Historical risk from NASA POWER under the selected irrigation scenario; not a yield forecast.',
     }
 
 
@@ -210,7 +210,7 @@ def _rotation_advice(crop, pt_cover, pt_soil, crop_rows):
                 'crop': row['crop'],
                 'name': row['name'],
                 'group_label': meta['group_label'],
-                'role': 'Поточний/попередній покрив' if idx == 0 else meta['benefit'],
+                'role': 'Current / previous land cover' if idx == 0 else meta['benefit'],
                 'score': row['score'] if row['score'] is not None else row.get('potential_score'),
                 'status': row['status'] if row['score'] is not None else row.get('potential_status', row['status']),
                 'potential': row['score'] is None and row.get('potential_score') is not None,
@@ -218,18 +218,18 @@ def _rotation_advice(crop, pt_cover, pt_soil, crop_rows):
             })
         return {'id': pid, 'title': title, 'focus': focus, 'steps': steps}
 
-    slope_note = ' Підвищений схил: бажані колосові чи суцільний посів проти ерозії.' if pt_soil and (pt_soil.get('slope') or 0) >= 5 else ''
+    slope_note = ' Higher slope: consider soil-cover and erosion-control requirements.' if pt_soil and (pt_soil.get('slope') or 0) >= 5 else ''
     return {
         'anchor_crop': anchor,
         'anchor_name': PROFILES[anchor]['name'],
         'anchor_source': 'usda_cdl' if detected else 'selected_crop',
         'cdl_label': (pt_cover or {}).get('label'),
         'plans': [
-            make_plan('soil_health', 'Азот і здоров’я ґрунту', 'Чергування зернових із бобовими (фіксація азоту та розрив циклів шкідників).' + slope_note, [step1_health, step2_health]),
-            make_plan('water_smart', 'Економія води й стійкість до спеки', 'Перехід на культури з найменшим водним дефіцитом за даними NASA POWER.', [step1_water, step2_water]),
-            make_plan('score_mix', 'Оптимальний локальний бал', 'Поєднання культур із найвищим індексом придатності на цьому ґрунті та поливі.', [step1_score, step2_score]),
+            make_plan('soil_health', 'Nitrogen and soil health', 'Alternating cereals with legumes can diversify pest cycles and nitrogen management.' + slope_note, [step1_health, step2_health]),
+            make_plan('water_smart', 'Water use and heat tolerance', 'Compare crops with lower modeled water deficits using NASA POWER data.', [step1_water, step2_water]),
+            make_plan('score_mix', 'Highest local model score', 'Compare crops with higher research suitability scores under this soil and irrigation scenario.', [step1_score, step2_score]),
         ],
-        'caveat': 'Загальні агрономічні принципи сівозміни на базі місцевих даних про ґрунт і клімат; не є польовим приписом або заміною агрохіманалізу.',
+        'caveat': 'General rotation principles using local soil and climate data; not a field prescription or a substitute for soil testing.',
     }
 
 
@@ -306,11 +306,11 @@ def analyze_point_insights(lon, lat, crop, year, planting, irrigation_mm=0, irri
             'cdl_label': (pt_cover or {}).get('label'),
             'cdl_category': (pt_cover or {}).get('category'),
             'scales': [
-                {'layer': 'NASA POWER (погода, ET0, GWETTOP/GWETROOT)', 'scale': '~0.5° × 0.625° (~55 км)'},
-                {'layer': 'NASA SMAP L4 (шар карти)', 'scale': '~9 км'},
-                {'layer': 'NASA MODIS Terra NDVI (шар карти)', 'scale': '250–500 м (8 днів)'},
-                {'layer': 'USDA SSURGO (ґрунти 0–30 см)', 'scale': 'Контури ґрунтової зйомки'},
-                {'layer': 'USDA CDL (землекористування)', 'scale': '30 м піксель'},
+                {'layer': 'NASA POWER (weather, ET0, GWETTOP/GWETROOT)', 'scale': '~0.5° × 0.625° (~55 km)'},
+                {'layer': 'NASA SMAP L4 (map overlay)', 'scale': '~9 km'},
+                {'layer': 'NASA MODIS Terra NDVI (map overlay)', 'scale': '250–500 m (8 days)'},
+                {'layer': 'USDA SSURGO (soil, 0–30 cm)', 'scale': 'Soil survey mapping units'},
+                {'layer': 'USDA CDL (land cover)', 'scale': 'Product resolution depends on year (2025: 10 m)'},
             ],
         },
         'crop_comparison': crop_rows,

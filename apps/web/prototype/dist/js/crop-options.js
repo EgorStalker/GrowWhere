@@ -24,12 +24,12 @@ export function parcelReferencePoint(area) {
   return best?{lon:best.lon,lat:best.lat}:null;
 }
 export function normalizeCropOptions(payload,year) {
-  if(payload?.query?.year!==year||!Array.isArray(payload?.crop_comparison))throw new Error('Отримано дані іншого періоду. Спробуйте ще раз.');
+  if(payload?.query?.year!==year||!Array.isArray(payload?.crop_comparison))throw new Error('The response covers a different period. Try again.');
   const options=CROP_IDS.map(crop=>{
     const row=payload.crop_comparison.find(item=>item.crop===crop)||{};
     const qualityPassed=['good','conditional','poor'].includes(row.status)&&Array.isArray(row.missing)&&row.missing.length===0;
-    const localWarning=crop==='wheat'?'Місцевий посібник має застереження щодо ярої пшениці; до автоматичного добору її не включено.':
-      crop==='barley'?'Для ярого ячменю є локальні обмеження; перевірте застосовність у своїй зоні.':null;
+    const localWarning=crop==='wheat'?'The local guide cautions against spring wheat; it is excluded from automatic selection.':
+      crop==='barley'?'Spring barley has local restrictions; check applicability in your zone.':null;
     const score=qualityPassed&&crop!=='wheat'&&finite(row.score)&&row.score>=0&&row.score<=100?row.score:null;
     const economics=row.economics||{};
     return {crop,score,status:score===null?'unknown':row.status,
@@ -40,12 +40,12 @@ export function normalizeCropOptions(payload,year) {
       eligible:score!==null&&row.status!=='poor'};
   });
   options.sort((a,b)=>(b.eligible-a.eligible)||((b.score??-1)-(a.score??-1)));
-  return {options,period:year,scopeLabel:'Історичне порівняння в опорній точці контуру',
+  return {options,period:year,scopeLabel:'Historical comparison at a reference point inside the boundary',
     limitations:[
-      'Попереднє порівняння лише за природними опадами, без підтвердженого додаткового поливу.',
-      'Бали стосуються однієї точки та опорних календарів дослідницької моделі; це не рекомендація для всього поля або нового сезону.',
-      'Регіональні витрати й ціни — історичні; поточний попит на ринку невідомий.',
-      'Яру пшеницю не включаємо до автоматичного добору через застереження місцевого посібника.'
+      'Preliminary comparison uses natural rainfall, without confirmed additional irrigation.',
+      'Scores describe one point and research-model calendars, not the whole field or a future season.',
+      'Regional costs and prices are historical; current market demand is unknown.',
+      'Spring wheat is excluded from automatic selection because of the local guide\u0027s cautions.'
     ],sourceUrls:[
       'https://power.larc.nasa.gov/docs/services/api/temporal/daily/',
       'https://sdmdataaccess.nrcs.usda.gov/WebServiceHelp.aspx',
@@ -56,11 +56,11 @@ export function normalizeCropOptions(payload,year) {
 
 export async function fetchCropOptions({lon,lat,year,signal}) {
   const [w,s,e,n]=KANSAS;
-  if(!finite(lon)||!finite(lat)||lon<w||lon>e||lat<s||lat>n)throw new Error('Для порівняння потрібна точка в пілотній області Канзасу.');
-  if(!Number.isInteger(year)||year<1984||year>=new Date().getUTCFullYear())throw new Error('Оберіть завершений історичний рік.');
+  if(!finite(lon)||!finite(lat)||lon<w||lon>e||lat<s||lat>n)throw new Error('Comparison requires a point inside the Kansas pilot coverage.');
+  if(!Number.isInteger(year)||year<1984||year>=new Date().getUTCFullYear())throw new Error('Choose a completed historical year.');
   const params=new URLSearchParams({lon:String(lon),lat:String(lat),crop:'corn',year:String(year),planting:`${year}-05-01`,irrigation_mm:'0',irrigation_known:'false',years_back:'1'});
   const response=await fetch(`/api/insights?${params}`,{signal});
   const value=await response.json();
-  if(!response.ok)throw new Error(value.error||'Не вдалося отримати порівняння культур.');
+  if(!response.ok)throw new Error(value.error||'Could not retrieve crop comparisons.');
   return normalizeCropOptions(value,year);
 }

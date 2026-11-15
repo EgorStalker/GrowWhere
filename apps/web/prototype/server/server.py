@@ -15,6 +15,7 @@ from growwhere.planning import planning_readiness
 from growwhere.forecast import nws_forecast,forecast_evidence
 from growwhere.agronomy import assess_agronomic_readiness
 from growwhere.sources import utcnow
+from growwhere.map_store import STORE as MAP_STORE
 
 STATIC=Path(__file__).resolve().parents[1]/'dist'
 class LocalServer(ThreadingHTTPServer):
@@ -45,6 +46,18 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             if parsed.path=='/api/health': return self.json(200,{'status':'ok','time':utcnow()})
             if parsed.path=='/api/sources': return self.json(200,source_status())
+            if parsed.path=='/api/map-products':
+                bbox=get('bbox')
+                known=get('irrigation_known')
+                if known is not None and known not in ('true','false'): raise ValueError('irrigation_known must be true or false')
+                products=MAP_STORE.list_products(crop=get('crop'),year=int(get('year')) if get('year') is not None else None,
+                    planting=get('planting'),irrigation_mm=float(get('irrigation_mm')) if get('irrigation_mm') is not None else None,
+                    irrigation_known=known=='true' if known is not None else None,method=get('method'),source_snapshot=get('source_snapshot'),
+                    bbox=[float(v) for v in bbox.split(',')] if bbox else None,include_unready=get('include_unready','0')=='1')
+                return self.json(200,{'products':products,'read_only':True,'upstream_requests':0})
+            if parsed.path=='/api/map-products/tiles':
+                if not get('product_id') or not get('bbox') or get('zoom') is None: raise ValueError('product_id, bbox and zoom are required')
+                return self.json(200,MAP_STORE.tiles(get('product_id'),[float(v) for v in get('bbox').split(',')],float(get('zoom'))))
             if parsed.path=='/api/planning-readiness':
                 bbox=get('bbox')
                 value=planning_readiness(mode=get('mode','own_land'),crop=get('crop'),
@@ -59,7 +72,7 @@ class Handler(SimpleHTTPRequestHandler):
                     value['forecast']=forecast
                 else:
                     value['forecast']={'available':False,'data':None,'status':'point_required' if value['coverage']['status']=='supported' else 'outside_or_missing_coverage',
-                        'reason':'Для погодного прогнозу оберіть точку в пілотній області Канзасу.','provenance':[]}
+                        'reason':'Select a point in the Kansas pilot area to retrieve a forecast.','provenance':[]}
                 value['agronomic_rules']=assess_agronomic_readiness(get('crop')) if get('crop') else None
                 return self.json(200,value)
             if parsed.path=='/api/analysis':
@@ -74,13 +87,13 @@ class Handler(SimpleHTTPRequestHandler):
             return self.json(404,{'error':'Unknown API endpoint'})
         except ValueError as exc:
             messages={
-                'This version supports seasons within one calendar year':'Оберіть ранішу дату сівби: ця версія оцінює сезон у межах одного календарного року.',
-                'Planting date must belong to the selected year':'Дата сівби має належати обраному року.',
-                'Invalid irrigation amount':'Кількість води має бути числом від 0 до 5000 мм.',
-                'Year is outside the available historical window':'Обраний рік ще не підтримується.',
-                'Invalid WGS84 bbox':'Ця область карти не підтримується. Поверніться до Канзасу.',
-                'Unsupported crop':'Ця культура ще не підтримується.'}
-            return self.json(400,{'error':messages.get(str(exc),'Перевірте обрані параметри: '+str(exc)),'status':'invalid_request'})
+                'This version supports seasons within one calendar year':'Choose an earlier reference date: this version evaluates seasons within one calendar year.',
+                'Planting date must belong to the selected year':'The scenario date must belong to the selected year.',
+                'Invalid irrigation amount':'The water amount must be between 0 and 5000 mm.',
+                'Year is outside the available historical window':'The selected year is not supported yet.',
+                'Invalid WGS84 bbox':'This map area has no analytical coverage. Return to Kansas.',
+                'Unsupported crop':'This crop is not supported yet.'}
+            return self.json(400,{'error':messages.get(str(exc),'Check your parameters: '+str(exc)),'status':'invalid_request'})
         except Exception as exc: return self.json(502,{'error':str(exc)[:400],'status':'source_unavailable'})
     def log_message(self,fmt,*args):
         # Do not log user coordinates or budgets from request URLs.

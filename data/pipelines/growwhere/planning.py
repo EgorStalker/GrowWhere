@@ -20,20 +20,20 @@ IRRIGATION_MISSING = ['validated_weather_forecast', 'current_root_zone_water_sto
                       'verified_root_depth_and_soil_profile',
                       'irrigation_system_efficiency', 'crop_growth_stage']
 GAP_LABELS = {
-    'validated_weather_forecast': 'Немає прогнозу з перевіреним горизонтом для обраного планування.',
-    'current_soil_temperature': 'Немає підтвердженої актуальної температури ґрунту.',
-    'validated_local_sowing_rules': 'Локальні правила ще не підтверджені для автоматичного вибору дати сівби.',
-    'crop_variety_and_target_season': 'Потрібні сорт культури та цільовий сезон.',
-    'current_root_zone_water_storage': 'Немає підтвердженого поточного запасу доступної води в кореневій зоні.',
-    'verified_root_depth_and_soil_profile': 'Потрібні глибина коріння й ґрунтовий профіль у межах усієї кореневої зони.',
-    'irrigation_system_efficiency': 'Не визначено ефективність системи поливу.',
-    'crop_growth_stage': 'Не визначено стадію розвитку культури.',
-    'selected_crop': 'Спочатку оберіть культуру.',
-    'selected_area': 'Спочатку оберіть ділянку або область пошуку.',
-    'unsupported_coverage': 'Для цієї території в поточній версії немає аналітичного покриття.',
-    'partial_coverage': 'Частина обраної території поза аналітичним покриттям.',
-    'past_target_year': 'Обраний цільовий рік уже минув; його не можна подавати як майбутній план.',
-    'target_season': 'Потрібно визначити цільовий сезон планування.',
+    'validated_weather_forecast': 'No forecast with a verified horizon for the selected planning period.',
+    'current_soil_temperature': 'No verified current soil temperature.',
+    'validated_local_sowing_rules': 'Local rules are not yet validated for automated sowing-date selection.',
+    'crop_variety_and_target_season': 'Crop variety and the target season are required.',
+    'current_root_zone_water_storage': 'No verified current available water storage in the root zone.',
+    'verified_root_depth_and_soil_profile': 'Root depth and a soil profile covering the full root zone are required.',
+    'irrigation_system_efficiency': 'Irrigation system efficiency is unspecified.',
+    'crop_growth_stage': 'Crop growth stage is unspecified.',
+    'selected_crop': 'Select a crop first.',
+    'selected_area': 'Select a field or a search region first.',
+    'unsupported_coverage': 'This version has no analytical coverage for this area.',
+    'partial_coverage': 'Part of the selected area is outside analytical coverage.',
+    'past_target_year': 'The target year is in the past and cannot be presented as a future plan.',
+    'target_season': 'Specify the target planning season.',
 }
 
 
@@ -182,12 +182,12 @@ def planning_readiness(mode='own_land', crop=None, lon=None, lat=None, bbox=None
         'future_sowing_date': {
             'available': sowing_ready, 'value': None, 'status': 'ready_for_calculation' if sowing_ready else 'insufficient_data',
             'missing': sowing_missing,
-            'reason': 'Перевірки даних пройдено; дату має обчислити окремий планувальний модуль.' if sowing_ready else 'У поточній версії бракує критичних даних для актуальної рекомендації дати сівби.',
+            'reason': 'Input checks passed; a separate planning module must calculate the date.' if sowing_ready else 'Critical inputs for a current sowing-date recommendation are missing.',
         },
         'irrigation_recommendation': {
             'available': irrigation_ready, 'value': None, 'unit': 'mm', 'status': 'ready_for_calculation' if irrigation_ready else 'insufficient_data',
             'missing': irrigation_missing,
-            'reason': 'Перевірки даних пройдено; кількість води має обчислити окремий планувальний модуль.' if irrigation_ready else 'У поточній версії бракує критичних даних для рекомендованої кількості поливу.',
+            'reason': 'Input checks passed; a separate planning module must calculate irrigation.' if irrigation_ready else 'Critical inputs for an irrigation recommendation are missing.',
         },
         'historical_suitability': {
             'available': not scope_missing,
@@ -197,12 +197,12 @@ def planning_readiness(mode='own_land', crop=None, lon=None, lat=None, bbox=None
             'requires_complete_per_cell': True,
             'scientifically_validated': False,
             'source_integrations': ['nasa-power', 'ssurgo-statsgo2', 'usda-cdl'],
-            'reason': 'Доступний лише дослідницький аналіз обраного історичного сезону. Повнота кожної території перевіряється окремо.',
+            'reason': 'Only research screening of the selected historical season is available. Completeness is checked separately for each area.',
         },
         'scenario_metadata': {
             'reference_month_day': profile.get('default_planting'),
             'purpose': 'historical_analysis_only',
-            'label': 'Опорний календар модельного історичного сезону',
+            'label': 'Research-model historical reference calendar',
             'is_agronomic_recommendation': False,
         },
         'assessment_policy': {

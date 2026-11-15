@@ -1,43 +1,43 @@
 // Ukrainian first. A later English dictionary can use these same keys.
-export const locale = 'uk-UA';
+export const locale = 'en-US';
 export const copy = {
-  brandTag:'Ваша земля. Зрозумілий вибір.', title:'Що посадити. Де виростити.',
-  stepNames:['Початок','Територія','Культура','Умови','Результати'],
-  cropNames:{wheat:'Яра пшениця',soy:'Соя',corn:'Кукурудза',sorghum:'Сорго',barley:'Ярий ячмінь',oats:'Овес',cotton:'Бавовник'},
+  brandTag:'Your land. A clearer choice.', title:'What to grow. Where to grow it.',
+  stepNames:['Start','Area','Crop','Conditions','Results'],
+  cropNames:{wheat:'Spring wheat',soy:'Soybeans',corn:'Corn',sorghum:'Sorghum',barley:'Spring barley',oats:'Oats',cotton:'Cotton'},
   cropDefaults:{wheat:'03-15',soy:'05-01',corn:'05-01',sorghum:'05-15',barley:'03-15',oats:'03-15',cotton:'04-20'},
   planningReadiness:{
-    title:'Доступна історична оцінка, а не план майбутніх робіт',
-    sowing:'Дата майбутньої сівби: недостатньо даних.',
-    irrigation:'Рекомендована кількість поливу: недостатньо даних.',
-    reason:'Для рекомендацій потрібен повний набір перевірених даних: прогноз, поточна температура й волога ґрунту та місцеві агрономічні правила. Історичний календар не є рекомендацією для нового сезону.'
+    title:'Historical screening, not a future farming plan',
+    sowing:'Future sowing date: insufficient data.',
+    irrigation:'Recommended irrigation: insufficient data.',
+    reason:'Advice requires complete verified inputs: forecast, current soil temperature and moisture, and local agronomic rules. The historical calendar is not advice for a new season.'
   },
   cropNotes:{
-    wheat:{season:'135 дн.',temp:'12–24 °C',note:'Рання сівба; чутлива до тривалої спеки > 35 °C.'},
-    soy:{season:'140 дн.',temp:'20–30 °C',note:'Теплолюбна олійна й бобова культура для весняно-літнього сезону.'},
-    corn:{season:'150 дн.',temp:'18–30 °C',note:'Висока потреба у воді; сильно реагує на полив у посушливих районах.'},
-    sorghum:{season:'130 дн.',temp:'20–32 °C',note:'Посухо- та жаростійке зернове для степової зони (поріг спеки 39 °C).'},
-    barley:{season:'125 дн.',temp:'11–23 °C',note:'Скоростигла рання зернова культура з меншим ризиком потрапити під спеку.'},
-    oats:{season:'130 дн.',temp:'10–22 °C',note:'Полюбляє прохолодніший старт весни та помірне зволоження.'},
-    cotton:{season:'180 дн.',temp:'22–33 °C',note:'Довгий теплий сезон; економіка USDA ERS у доларах за фунт.'}
+    wheat:{season:'135 days',temp:'12–24 °C',note:'Early-season crop; sensitive to prolonged heat > 35 °C.'},
+    soy:{season:'140 days',temp:'20–30 °C',note:'Warm-season oilseed and legume.'},
+    corn:{season:'150 days',temp:'18–30 °C',note:'High water demand; can respond strongly to irrigation in dry areas.'},
+    sorghum:{season:'130 days',temp:'20–32 °C',note:'Drought- and heat-tolerant grain crop (model heat threshold: 39 °C).'},
+    barley:{season:'125 days',temp:'11–23 °C',note:'Early-maturing spring cereal; heat exposure depends on local conditions.'},
+    oats:{season:'130 days',temp:'10–22 °C',note:'Prefers a cooler start and moderate moisture.'},
+    cotton:{season:'180 days',temp:'22–33 °C',note:'Requires a long warm season; USDA ERS reports cotton prices per pound.'}
   },
-  statuses:{good:'Підходить',conditional:'Є обмеження',poor:'Не підходить',unknown:'Без даних',excluded:'Поза аналізом'},
+  statuses:{good:'Suitable',conditional:'Limited',poor:'Unsuitable',unknown:'No data',excluded:'Outside analysis'},
   statusInfo:{
-    good:'За доступними даними та умовами розрахунку ця територія має сприятливу оцінку.',
-    conditional:'Розрахунок показує обмеження. Перевірте, які саме умови впливають на результат.',
-    poor:'За обраних умов один або декілька чинників суттєво обмежують придатність.',
-    unknown:'Не вистачає обов’язкових даних для розрахунку. Це не означає, що земля непридатна.',
-    excluded:'У точці перевірки USDA CDL визначено покрив, який не входить до аналізу вирощування: наприклад воду, забудову, ліс, заболочену територію чи сніг. Оцінку придатності для цієї зони призупинено.'
+    good:'Available data and the selected scenario indicate favorable conditions.',
+    conditional:'The model indicates constraints. Check which factors limit this result.',
+    poor:'One or more factors substantially limit suitability under the selected scenario.',
+    unknown:'Required inputs are missing. This does not mean the land is unsuitable.',
+    excluded:'USDA CDL identifies excluded cover at the sample point, such as water, built-up land, forest, wetland or snow. Suitability analysis is paused for this zone.'
   },
-  factorNames:{temperature:'Температурні умови',water:'Доступність води',ph:'Кислотність ґрунту',awc:'Утримання вологи ґрунтом',drainage:'Відведення води',slope:'Нахил поверхні',texture:'Склад ґрунту'},
-  missingNames:{climate:'Погода NASA',climate_coordinates:'Координати кліматичних даних',complete_season:'Повний сезон погоди',soil:'Ґрунтові дані USDA',soil_0_30cm:'Повний профіль ґрунту 0–30 см',temperature:'Температурні умови',water:'Водний баланс',ph:'Кислотність ґрунту',awc:'Водоутримання ґрунту',drainage:'Дренаж',slope:'Нахил',texture:'Склад ґрунту',landcover:'Покрив території USDA CDL'},
-  landcoverCategories:{cropland:'Орні землі',pasture:'Пасовища та трав’яний покрив',water:'Водойми',urban:'Забудова',forest:'Ліс',wetland:'Заболочені землі',snow:'Сніг або лід',other:'Інший покрив',unknown:'Без даних'},
-  irrigationNames:{no:'Без поливу',yes:'Полив доступний',unknown:'Ще не знаю'},
-  drainageNames:{'Excessively drained':'Надмірне відведення води','Somewhat excessively drained':'Дещо надмірне відведення води','Well drained':'Добре відведення води','Moderately well drained':'Помірне відведення води','Somewhat poorly drained':'Дещо недостатнє відведення води','Poorly drained':'Недостатнє відведення води','Very poorly drained':'Дуже слабке відведення води'}
+  factorNames:{temperature:'Temperature conditions',water:'Water availability',ph:'Soil acidity',awc:'Soil water storage',drainage:'Drainage',slope:'Slope',texture:'Soil texture'},
+  missingNames:{climate:'NASA weather',climate_coordinates:'Climate sample coordinates',complete_season:'Complete weather season',soil:'USDA soil data',soil_0_30cm:'Complete 0–30 cm soil profile',temperature:'Temperature conditions',water:'Water balance',ph:'Soil acidity',awc:'Soil water retention',drainage:'Drainage',slope:'Slope',texture:'Soil texture',landcover:'USDA CDL land cover'},
+  landcoverCategories:{cropland:'Cropland',pasture:'Pasture and grassland',water:'Water',urban:'Built-up land',forest:'Forest',wetland:'Wetland',snow:'Snow or ice',other:'Other cover',unknown:'No data'},
+  irrigationNames:{no:'No irrigation',yes:'Irrigation available',unknown:'Not sure yet'},
+  drainageNames:{'Excessively drained':'Excessively drained','Somewhat excessively drained':'Somewhat excessively drained','Well drained':'Well drained','Moderately well drained':'Moderately well drained','Somewhat poorly drained':'Somewhat poorly drained','Poorly drained':'Poorly drained','Very poorly drained':'Very poorly drained'}
 };
 export const tr = (key, fallback='') => key.split('.').reduce((value,part)=>value?.[part],copy) ?? fallback;
-export const fmt = (number,digits=0) => Number.isFinite(Number(number)) && number!==null && number!=='' ? new Intl.NumberFormat(locale,{maximumFractionDigits:digits}).format(Number(number)) : 'Без даних';
+export const fmt = (number,digits=0) => Number.isFinite(Number(number)) && number!==null && number!=='' ? new Intl.NumberFormat(locale,{maximumFractionDigits:digits}).format(Number(number)) : 'No data';
 export function dateTime(value) {
-  if(!value || Number.isNaN(Date.parse(value))) return 'Ще не отримано';
+  if(!value || Number.isNaN(Date.parse(value))) return 'Not yet retrieved';
   return new Intl.DateTimeFormat(locale,{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value));
 }
 

@@ -8,8 +8,8 @@ from .sources import CACHE_DIR,utcnow,power_point
 from . import soil,landcover
 
 COVERAGE=[-102.1,36.9,-94.5,40.1]  # Kansas pilot bounding extent; no invented data outside.
-NATIVE_RESOLUTION='NASA POWER: метеорологія ~0.5° × 0.625°, сонячна радіація ~1°; USDA: ґрунтові одиниці зйомки.'
-REFRESH_POLICY='Перевірка у відкритій вкладці кожні 5 хв; повторне отримання джерел після 24 год або вручну (не частіше 60 с для того самого запиту).'
+NATIVE_RESOLUTION='NASA POWER: meteorology ~0.5° × 0.625°, solar radiation ~1°; USDA: soil survey mapping units.'
+REFRESH_POLICY='Checked every 5 minutes in an open tab; sources refreshed after 24 hours or manually, with at least 60 seconds between identical requests.'
 _request_slots=threading.Semaphore(3)
 
 def clip_bbox(bbox):
@@ -28,7 +28,7 @@ def grid(bbox,zoom):
             if left>=right or bottom>=top: continue
             features.append({'id':f'grid-{dx}-{col}-{row}','center':[(left+right)/2,(bottom+top)/2],
                 'geometry':{'type':'Polygon','coordinates':[[[left,bottom],[right,bottom],[right,top],[left,top],[left,bottom]]]}})
-    return features, f'{dy}° × {dx}° · вибірка у центрі та 4 внутрішніх точках (не суцільний растр)'
+    return features, f'{dy}° × {dx}° · center and 4 internal samples, not a continuous raster'
 
 def _grid_sample_points(feature):
     ring=feature['geometry']['coordinates'][0]
@@ -126,9 +126,9 @@ def analyze(bbox,zoom,crop,year,planting,irrigation_mm=0,irrigation_known=True,r
     meta={'query':{'bbox':bbox,'zoom':zoom,'crop':crop,'year':year,'planting':planting,'irrigation_mm':irrigation_mm,'irrigation_known':irrigation_known},
         'mode':'soil_polygons' if zoom>=12 else 'grid','resolution':None,'coverage_bbox':COVERAGE,'updated_at':None,'completed_at':utcnow(),
         'errors':[],'truncated':False,'method':METHOD_VERSION,'weights':WEIGHTS,'native_resolution':NATIVE_RESOLUTION,'cache_ttl_hours':24,'refresh_policy':REFRESH_POLICY,
-        'caveat':'Експериментальний індекс без польової калібровки. Дрібні ґрунтові полігони не підвищують роздільність клімату.'}
+        'caveat':'Experimental index without field calibration. Smaller soil polygons do not improve climate resolution.'}
     if bounds is None or zoom<5:
-        meta['resolution']='Наблизьте Канзас, США, для розрахунку.' if zoom<5 else 'Без даних за межами доступного покриття.'
+        meta['resolution']='Zoom to Kansas, USA, to calculate suitability.' if zoom<5 else 'No data outside the available coverage.'
         return {'type':'FeatureCollection','features':[],'meta':meta}
     with _request_slots:
         source_meta=[];soil_meta=None
@@ -136,14 +136,14 @@ def analyze(bbox,zoom,crop,year,planting,irrigation_mm=0,irrigation_known=True,r
         if zoom>=12:
             # Do not claim a complete native polygon layer if a request is too broad.
             if (bounds[2]-bounds[0])*(bounds[3]-bounds[1])>.16:
-                meta['truncated']=True;meta['resolution']='Наблизьте карту ще: детальні ґрунтові полігони потребують меншої області.'
+                meta['truncated']=True;meta['resolution']='Zoom in further: detailed soil polygons require a smaller area.'
                 return {'type':'FeatureCollection','features':[],'meta':meta}
             try:
                 features,soil_meta,truncated=soil.polygons(bounds,refresh)
                 source_meta.append(soil_meta);meta['truncated']=truncated
             except Exception as exc:
                 meta['errors'].append({'source':'USDA SSURGO','message':str(exc)[:280]});features=[]
-            meta['resolution']='Реальні ґрунтові полігони USDA; не межі власності. Клімат залишається крупномасштабним.'
+            meta['resolution']='Actual USDA soil survey polygons, not property boundaries. Climate data remains coarse.'
             sample_inputs=features
             cover_inputs=[{'id':f['id'],'lon':f['center'][0],'lat':f['center'][1]} for f in features]
         else:
@@ -214,15 +214,15 @@ def source_status():
                 meta=json.loads(path.read_text(encoding='utf-8'))['meta'];sid=meta['source_id']
                 dates[sid]=max(dates.get(sid,''),meta['retrieved_at'])
             except (OSError,ValueError,KeyError): pass
-    connected={'nasa-power':'Погода, опади, FAO-56 ET0; вологість ґрунту 0–5 см (GWETTOP) та 0–100 см (GWETROOT)','ssurgo-statsgo2':'Ґрунти 0–30 см і справжні ґрунтові полігони USDA','usda-cdl':'Покрив у точці вибірки за точний рік; 30 м роздільність','usda-ers-costs':'Регіональні витрати й історична ціна при збиранні; не поточний попит','smap':'Шар вологості кореневої зони SMAP L4 (NASA GIBS WMTS, ~9 км) на карті','landsat-modis-viirs':'Шар вегетації MODIS Terra NDVI 8-Day (NASA GIBS WMTS, 250–500 м) на карті'}
+    connected={'nasa-power':'Weather, rainfall, FAO-56 ET0; surface (0–5 cm) and root-zone (0–100 cm) wetness','ssurgo-statsgo2':'Soil, 0–30 cm, and USDA soil survey polygons','usda-cdl':'Land cover at the sample point for the exact year; product resolution depends on year','usda-ers-costs':'Regional costs and historical harvest prices; not current demand','smap':'SMAP L4 root-zone moisture overlay (NASA GIBS WMTS, ~9 km)','landsat-modis-viirs':'MODIS Terra NDVI 8-Day overlay (NASA GIBS WMTS, 250–500 m)'}
     urls={'nasa-power':'https://power.larc.nasa.gov/docs/services/api/temporal/daily/','ssurgo-statsgo2':'https://sdmdataaccess.nrcs.usda.gov/WebServiceHelp.aspx','usda-cdl':landcover.SERVICE_URL,'usda-ers-costs':'https://www.ers.usda.gov/data-products/commodity-costs-and-returns'}
-    connected['usda-cdl']='Покрив у точці за точний рік; роздільність конкретного продукту (2025: 10 м)'
-    connected['noaa-nws']='Короткостроковий погодинний прогноз для точки; повітря, не температура ґрунту; не входить до історичного індексу'
+    connected['usda-cdl']='Land cover at the point for the exact year; native product resolution (2025: 10 m)'
+    connected['noaa-nws']='Short-range hourly point forecast; air, not soil temperature; separate from the historical index'
     urls['noaa-nws']='https://www.weather.gov/documentation/services-web-api'
     for filename in ['sources.csv','additional-sources.csv']:
         path=ROOT/'data/catalog'/filename
         if not path.exists(): continue
         with path.open(encoding='utf-8',newline='') as stream:
             for row in csv.DictReader(stream):
-                sid=row['id'];statuses.append({'id':sid,'name':row['name'],'status':'connected' if sid in connected else row.get('status','not_connected') if sid in {'kstate-extension','kansas-mesonet'} else 'not_connected','role':connected.get(sid,row.get('role','Не підключено до поточної формули; значення не вигадуються.')),'updated_at':dates.get(sid),'source_url':urls.get(sid,row.get('source_url'))})
+                sid=row['id'];statuses.append({'id':sid,'name':row['name'],'status':'connected' if sid in connected else row.get('status','not_connected') if sid in {'kstate-extension','kansas-mesonet'} else 'not_connected','role':connected.get(sid,row.get('role','Not connected to the current method; values are not fabricated.')),'updated_at':dates.get(sid),'source_url':urls.get(sid,row.get('source_url'))})
     return {'sources':statuses,'refresh_policy':REFRESH_POLICY,'method':METHOD_VERSION,'weights':WEIGHTS,'native_resolution':NATIVE_RESOLUTION}

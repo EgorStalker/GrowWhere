@@ -54,9 +54,9 @@ def nws_forecast(lon, lat, refresh=False, now=None):
                       'minimum_remaining_horizon_hours': MIN_HORIZON_HOURS,
                       'checked_at': now.isoformat(), 'issue_age_hours': None},
         'limitations': [
-            'Короткий прогноз повітря на сітці NWS близько 2,5 км; це не вимірювання ґрунту на полі.',
-            'Імовірність опадів не є кількістю опадів або нормою поливу.',
-            'Прогноз не визначає самостійно дату сівби та не покриває весь майбутній сезон.',
+            'Short-range air forecast on the NWS grid, about 2.5 km; not a measurement of field soil.',
+            'Precipitation probability is not rainfall amount or irrigation demand.',
+            'The forecast alone does not determine a sowing date or cover the entire future season.',
         ],
     }
     if isinstance(lon, bool) or isinstance(lat, bool):
@@ -69,7 +69,7 @@ def nws_forecast(lon, lat, refresh=False, now=None):
         raise ValueError('Invalid forecast coordinates')
     west, south, east, north = KANSAS_BBOX
     if not west <= lon <= east or not south <= lat <= north:
-        result.update(status='outside_pilot_coverage', reason='Прогноз у цій версії підключено лише для пілотної області Канзасу.')
+        result.update(status='outside_pilot_coverage', reason='Forecast support in this version is limited to the Kansas pilot area.')
         return result
     result['point'] = {'lon': lon, 'lat': lat}
     try:
@@ -84,7 +84,7 @@ def nws_forecast(lon, lat, refresh=False, now=None):
         age = (now - issued).total_seconds() / 3600
         result['freshness']['issue_age_hours'] = round(age, 2)
         if age < -0.25 or age > MAX_ISSUE_AGE_HOURS:
-            result.update(status='stale', reason='Випуск прогнозу застарілий або має непідтверджений час.')
+            result.update(status='stale', reason='The forecast issue is stale or its timestamp could not be verified.')
             return result
         periods = []
         previous_end = None
@@ -115,13 +115,13 @@ def nws_forecast(lon, lat, refresh=False, now=None):
                             'precipitation_probability_pct': pop,
                             'short_forecast': raw.get('shortForecast')})
         if not periods or _instant(periods[0]['start']) > now + dt.timedelta(hours=2) or (_instant(periods[-1]['end']) - now).total_seconds() < MIN_HORIZON_HOURS * 3600:
-            result.update(status='insufficient_horizon', reason='Прогноз не має достатнього актуального погодинного горизонту.')
+            result.update(status='insufficient_horizon', reason='The forecast has insufficient current hourly coverage.')
             return result
-        result.update(available=True, status='available', reason='Актуальний короткий прогноз NOAA NWS.',
+        result.update(available=True, status='available', reason='Current short-range NOAA NWS forecast.',
                       data={'issued_at': issued.isoformat(), 'valid_from': periods[0]['start'],
                             'valid_to': periods[-1]['end'], 'period_count': len(periods), 'periods': periods})
     except (UpstreamError, KeyError, TypeError, ValueError, AttributeError) as exc:
-        result.update(status='source_unavailable_or_invalid', reason='Не вдалося отримати або перевірити актуальний прогноз NOAA NWS.',
+        result.update(status='source_unavailable_or_invalid', reason='Could not retrieve or validate the current NOAA NWS forecast.',
                       error=str(exc)[:220])
     return result
 
@@ -134,5 +134,5 @@ def forecast_evidence(forecast, target_year=None):
             'supports_selected_scope': bool(usable),
             'source_url': forecast['provenance'][-1]['source_url'] if forecast['provenance'] else None,
             'checked_at': forecast['freshness']['checked_at'],
-            'reason': ('Прогноз NOAA NWS доступний лише для поточного короткого горизонту; для обраного року його недостатньо.'
+            'reason': ('NOAA NWS covers the current short-range horizon only; it is insufficient for the selected year.'
                        if forecast['available'] and not usable else forecast['reason'])}

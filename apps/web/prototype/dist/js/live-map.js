@@ -1,9 +1,10 @@
 import {tr} from './live-i18n.js';
 import {geometryContainsPoint, polygonBounds} from './area-selection.js';
+import {buildPresentationZones} from './map-presentation.js';
 
-export const STATUS_COLORS={good:'#249a68',conditional:'#dfb445',poor:'#c9604d',unknown:'#a9b1ab',excluded:'#66736b'};
-const DEFAULT_COVERAGE=[-102.1,36.9,-94.5,40.1];
-let map, polygons, selectedOutline, coverageOutline, coverageBackground, outsideCoverage, customAreaLayer, draftLayer, draftPreviewLayer, draftMarkers;
+export const STATUS_COLORS={good:'#27a985',conditional:'#e7b85a',poor:'#d87464',unknown:'#b9c2c6',excluded:'#77858a'};
+const DEFAULT_COVERAGE=[-180,5,-10,84];
+let map, polygons, presentationLayer, selectedOutline, coverageOutline, coverageBackground, outsideCoverage, customAreaLayer, draftLayer, draftPreviewLayer, draftMarkers;
 let osmLayer, satLayer, labelsLayer, gibsLayer;
 let baseMode='satellite';
 let signalMode='index'; // 'index' | 'ndvi' | 'smap'
@@ -23,10 +24,10 @@ let rectAnchor=null; // {latlng, point}
 let rectDragging=false;
 
 export function initMap({move,select,areaChange,drawProgress,tileError}) {
-  if(!window.L) throw new Error('Leaflet не завантажився');
+  if(!window.L) throw new Error('Leaflet failed to load');
   onMove=move;onSelect=select;onAreaChange=areaChange;onDrawProgress=drawProgress;
-  map=L.map('live-map',{zoomControl:false,minZoom:2,maxZoom:18,worldCopyJump:true,keyboard:true,scrollWheelZoom:true,preferCanvas:false});
-  L.control.zoom({position:'topright',zoomInTitle:'Збільшити карту',zoomOutTitle:'Зменшити карту'}).addTo(map);
+  map=L.map('live-map',{zoomControl:false,minZoom:2,maxZoom:18,worldCopyJump:true,keyboard:true,scrollWheelZoom:true,preferCanvas:false,zoomAnimation:false,fadeAnimation:false});
+  L.control.zoom({position:'topright',zoomInTitle:'Zoom in',zoomOutTitle:'Zoom out'}).addTo(map);
   L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);
   osmLayer=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:19,maxNativeZoom:19,updateWhenIdle:true,keepBuffer:1,
@@ -48,6 +49,8 @@ export function initMap({move,select,areaChange,drawProgress,tileError}) {
   map.createPane('nasaSignal');map.getPane('nasaSignal').style.zIndex=402;
   map.getPane('nasaSignal').style.pointerEvents='none';
   map.createPane('analysisPolygons');map.getPane('analysisPolygons').style.zIndex=410;
+  map.getPane('analysisPolygons').style.pointerEvents='none';
+  map.createPane('analysisHits');map.getPane('analysisHits').style.zIndex=411;
   map.createPane('customArea');map.getPane('customArea').style.zIndex=425;
   map.getPane('customArea').style.pointerEvents='none';
   map.createPane('selectedZone');map.getPane('selectedZone').style.zIndex=430;
@@ -56,9 +59,10 @@ export function initMap({move,select,areaChange,drawProgress,tileError}) {
   outsideCoverage=L.polygon([[[85,-180],[85,180],[-85,180],[-85,-180]],[[DEFAULT_COVERAGE[1],DEFAULT_COVERAGE[0]],[DEFAULT_COVERAGE[1],DEFAULT_COVERAGE[2]],[DEFAULT_COVERAGE[3],DEFAULT_COVERAGE[2]],[DEFAULT_COVERAGE[3],DEFAULT_COVERAGE[0]]]],{pane:'coverageBackground',color:STATUS_COLORS.unknown,weight:0,fillColor:'#0b0f0e',fillOpacity:.18,interactive:false}).addTo(map);
   coverageBackground=L.rectangle([[DEFAULT_COVERAGE[1],DEFAULT_COVERAGE[0]],[DEFAULT_COVERAGE[3],DEFAULT_COVERAGE[2]]],{pane:'coverageBackground',color:'#27d39b',weight:1,fillColor:STATUS_COLORS.unknown,fillOpacity:.06,interactive:false}).addTo(map);
   coverageOutline=L.rectangle(coverageBackground.getBounds(),{color:'#27d39b',weight:2.5,dashArray:'7 6',fill:false,interactive:false}).addTo(map);
-  polygons=L.geoJSON(null,{pane:'analysisPolygons',style:featureStyle,onEachFeature}).addTo(map);
+  presentationLayer=L.geoJSON(null,{pane:'analysisPolygons',renderer:L.canvas({pane:'analysisPolygons',padding:.3}),interactive:false,smoothFactor:0,style:featureStyle}).addTo(map);
+  polygons=L.geoJSON(null,{pane:'analysisHits',smoothFactor:0,style:hitFeatureStyle,onEachFeature}).addTo(map);
   customAreaLayer=L.geoJSON(null,{pane:'customArea',interactive:false}).addTo(map);
-  selectedOutline=L.geoJSON(null,{pane:'selectedZone',interactive:false,style:{color:'#102d20',weight:4,fill:false,dashArray:'7 3'}}).addTo(map);
+  selectedOutline=L.geoJSON(null,{pane:'selectedZone',interactive:false,smoothFactor:0,style:{color:'#153e35',weight:2.5,opacity:1,fill:false,lineJoin:'round'}}).addTo(map);
   draftLayer=L.layerGroup({pane:'drawDraft'}).addTo(map);
   draftPreviewLayer=L.layerGroup({pane:'drawDraft'}).addTo(map);
   draftMarkers=L.layerGroup({pane:'drawDraft'}).addTo(map);
@@ -90,7 +94,7 @@ export function initMap({move,select,areaChange,drawProgress,tileError}) {
   window.addEventListener('pointercancel',handlePointerCancel);
 
   map.fitBounds(coverageBackground.getBounds(),{padding:[18,18],maxZoom:7});
-  container.setAttribute('aria-label','Карта придатності. Переміщуйте стрілками, масштабуйте кнопками плюс і мінус. Територію також можна виділити на карті або обрати зі списку.');
+  container.setAttribute('aria-label','Suitability map. Pan with arrow keys and zoom with plus and minus. You can draw a boundary or select a listed zone.');
   return map;
 }
 
@@ -194,7 +198,7 @@ function renderPolygonDraft() {
       interactive:isFirst
     }).addTo(draftMarkers);
     if(isFirst){
-      marker.bindTooltip('Натисніть, щоб замкнути контур',{direction:'top',offset:[0,-8]});
+      marker.bindTooltip('Click to close the boundary',{direction:'top',offset:[0,-8]});
       marker.on('click',event=>{L.DomEvent.stopPropagation(event);finishPolygonSelection();});
     }
   });
@@ -289,7 +293,9 @@ export function fitCustomArea() {
   if(!customArea)return;
   const [west,south,east,north]=customArea.bbox;
   map.invalidateSize({pan:false});
-  map.fitBounds([[south,west],[north,east]],{padding:[32,32],maxZoom:14,animate:false});
+  const drawer=document.getElementById('map-drawer');
+  const coveredWidth=drawer&&!drawer.hidden?drawer.getBoundingClientRect().width+24:0;
+  map.fitBounds([[south,west],[north,east]],{paddingTopLeft:[32,32],paddingBottomRight:[Math.max(32,Math.min(coveredWidth,map.getSize().x*.58)),32],maxZoom:14,animate:false});
 }
 
 function applyBaseLayer() {
@@ -348,19 +354,27 @@ export function setSignalLayer(mode,year) {
 function featureStyle(feature) {
   const status=feature.properties?.result?.status || 'unknown';
   const id=String(feature.properties?.id ?? feature.id);
-  const stroke=baseMode==='satellite'?'rgba(255,255,255,0.8)':'#ffffff';
   const effectiveOpacity=signalMode==='index'?overlayOpacity:Math.min(0.16,overlayOpacity);
-  const fillOp=effectiveOpacity<=0?0:status==='unknown'?Math.min(0.35,effectiveOpacity*0.78):effectiveOpacity;
-  const base={color:status==='unknown'?'#b5beb7':stroke,weight:1.2,fillColor:STATUS_COLORS[status]||STATUS_COLORS.unknown,fillOpacity:fillOp,opacity:1};
+  const fillOp=effectiveOpacity<=0?0:status==='unknown'?Math.min(0.14,effectiveOpacity*0.3):status==='excluded'?Math.min(.24,effectiveOpacity*.6):effectiveOpacity;
+  const base={stroke:false,weight:0,fillColor:STATUS_COLORS[status]||STATUS_COLORS.unknown,fillOpacity:fillOp,smoothFactor:0};
   if(!customArea)return base;
-  const inside=areaSummary?.intersectingIds?.has(id);
-  if(!inside)return {...base,fillOpacity:overlayOpacity<=0?0:0.06,opacity:.22,weight:.8};
-  if(areaDisplayMode==='solid')return {...base,fillOpacity:0,opacity:.35,weight:1,color:'#ffffff'};
-  return {...base,fillOpacity:Math.min(0.75,Math.max(0.18,overlayOpacity+0.12)),weight:1.6,opacity:1};
+  const inside=feature.properties?.presentation_partition==='inside'||areaSummary?.intersectingIds?.has(id);
+  if(!inside)return {...base,fillOpacity:overlayOpacity<=0?0:(status==='unknown' ? 0.025 : 0.06)};
+  if(areaDisplayMode==='solid')return {...base,fillOpacity:0};
+  return {...base,fillOpacity:overlayOpacity<=0?0:status==='unknown'?Math.min(.18,fillOp):Math.min(.75,Math.max(.18,overlayOpacity+.12))};
 }
 
+function hitFeatureStyle(){return {stroke:false,weight:0,opacity:0,fill:true,fillColor:'#000000',fillOpacity:0};}
+
 function refreshPolygonStyles() {
-  polygons?.setStyle(featureStyle);
+  presentationLayer?.setStyle(featureStyle);
+  polygons?.setStyle(hitFeatureStyle);
+}
+
+function renderPresentation() {
+  if(!presentationLayer)return;
+  const display=buildPresentationZones(collection,{zoom:map.getZoom(),partition:feature=>customArea?(areaSummary?.intersectingIds?.has(String(feature.properties?.id??feature.id))?'inside':'outside'):''});
+  presentationLayer.clearLayers();presentationLayer.addData(display);
 }
 
 function renderCustomAreaOverlay() {
@@ -405,8 +419,12 @@ function onEachFeature(feature,layer) {
   layer.on('dblclick',event=>{
     if(drawMode==='polygon'){L.DomEvent.stop(event);finishPolygonSelection();}
   });
-  layer.on('mouseover',()=>{if(!pending&&!drawMode&&(!customArea||areaDisplayMode==='zones'))layer.setStyle({weight:2.5,color:'#203e2b'});});
-  layer.on('mouseout',()=>layer.setStyle(featureStyle(feature)));
+  layer.on('mouseover',()=>{if(!pending&&!drawMode&&(!customArea||areaDisplayMode==='zones'))layer.setStyle({stroke:true,weight:1.3,color:'#224c42',opacity:.8,fillOpacity:0});});
+  layer.on('mouseout',()=>layer.setStyle(hitFeatureStyle()));
+  const label=L.DomUtil.create('span');
+  const score=feature.properties?.result?.score;
+  label.textContent=`${featureName(feature)} · ${tr('statuses.'+(feature.properties?.result?.status||'unknown'))}${typeof score==='number'&&Number.isFinite(score)?` · ${Math.round(score)}/100`:''}`;
+  layer.bindTooltip(label,{sticky:true,direction:'top',opacity:.94});
   layer.on('add',()=>{
     const element=layer.getElement?.();
     if(!element)return;
@@ -419,18 +437,19 @@ function onEachFeature(feature,layer) {
 export function featureName(feature) {
   const p=feature.properties||{};
   if(p.ui_label)return p.ui_label;
-  if(['center_sample_only','multi_point_overview_5pt'].includes(p.representation)&&p.center?.length>=2)return `Комірка ${Number(p.center[1]).toFixed(2)}°, ${Number(p.center[0]).toFixed(2)}°`;
+  if(['center_sample_only','multi_point_overview_5pt'].includes(p.representation)&&p.center?.length>=2)return `Grid cell ${Number(p.center[1]).toFixed(2)}°, ${Number(p.center[0]).toFixed(2)}°`;
   const coords=p.climate?.climate_sample || p.sample || p.center;
-  if(coords?.length>=2)return `Територія ${Number(coords[1]).toFixed(2)}°, ${Number(coords[0]).toFixed(2)}°`;
-  return `Територія №${String(p.id??feature.id).slice(-8)}`;
+  if(coords?.length>=2)return `Area ${Number(coords[1]).toFixed(2)}°, ${Number(coords[0]).toFixed(2)}°`;
+  return `Area #${String(p.id??feature.id).slice(-8)}`;
 }
 
 export function setAnalysis(data,summary=null) {
   collection=data;pending=false;areaSummary=summary;
   featureLayers.clear();polygons.clearLayers();polygons.addData(data);
+  renderPresentation();
   refreshPolygonStyles();
   renderCustomAreaOverlay();
-  const bbox=data.meta?.coverage_bbox;
+  const bbox=data.meta?.enabled_bbox||DEFAULT_COVERAGE;
   if(bbox?.length===4){const bounds=[[bbox[1],bbox[0]],[bbox[3],bbox[2]]];coverageBackground.setBounds(bounds);coverageOutline.setBounds(bounds);}
   if(selectedId && featureLayers.has(selectedId))selectFeature(selectedId,{notify:true});
   else {selectedId=null;selectedOutline.clearLayers();}
@@ -439,6 +458,7 @@ export function setAnalysis(data,summary=null) {
 export function clearAnalysis() {
   pending=true;areaSummary=null;
   collection={type:'FeatureCollection',features:[]};featureLayers.clear();polygons.clearLayers();selectedOutline.clearLayers();
+  presentationLayer.clearLayers();
   renderCustomAreaOverlay();
 }
 
@@ -463,7 +483,11 @@ export function clearSelectedFeature() {
 
 export function focusKansas() {
   map.invalidateSize({pan:false});
-  map.fitBounds(coverageOutline.getBounds(),{padding:[18,18],maxZoom:7,animate:false});
+  map.fitBounds([[36.9,-102.1],[40.1,-94.5]],{padding:[18,18],maxZoom:7,animate:false});
+}
+export function focusNorthAmerica() {
+  map.invalidateSize({pan:false});
+  map.fitBounds([[DEFAULT_COVERAGE[1],DEFAULT_COVERAGE[0]],[DEFAULT_COVERAGE[3],DEFAULT_COVERAGE[2]]],{padding:[18,18],maxZoom:5,animate:false});
 }
 export function focusDetail() {
   if(customArea){fitCustomArea();return;}

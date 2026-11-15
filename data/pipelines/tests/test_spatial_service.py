@@ -82,7 +82,7 @@ class GridTests(unittest.TestCase):
         for zoom in [6,8,10]:
             features,resolution=service.grid(bounds,zoom)
             counts.append(len(features))
-            self.assertIn('центрі',resolution)
+            self.assertIn('center',resolution)
             self.assertEqual(len({feature['id'] for feature in features}),len(features))
             for feature in features:
                 ring=feature['geometry']['coordinates'][0]

@@ -284,4 +284,19 @@ body.on-territory-stage .live-map{height:56vh;min-height:330px}body.on-territory
 @media(max-width:620px){.mode-options{grid-template-columns:1fr;gap:12px}.mode-card{padding:20px}.mode-card h2{font-size:22px}.welcome-compact{padding:16px!important}.territory-tools button{flex:1}.territory-stage h1{font-size:26px}.territory-footer{flex-direction:column;align-items:stretch}.crop-option-list{grid-template-columns:1fr}}
 
 .mode-card .step-num{justify-self:start}
+.mode-card .step-num{display:none}
+.quiet-note{font-size:14px;color:#65716b;margin:18px 0 0}
+.compact-notice{padding:10px 14px;margin:12px 0;background:#f6f7f4;border:1px solid #d8dfd9;border-left:3px solid #d9ad57}
+.compact-notice summary{font-size:14px;font-weight:600;cursor:pointer}
+.compact-notice p{font-size:14px;line-height:1.5;margin:10px 0 0}
+.map-topbar{position:relative;align-items:center;gap:14px;padding:10px 14px}
+.map-period{font-size:13px;color:#64736b;margin-right:auto}
+.map-select-button,.map-coverage-button{width:auto;padding:9px 14px;border:1px solid #c9d5cf;background:#fff;border-radius:7px;font-size:14px;font-weight:600}
+.map-settings{position:relative;margin-left:auto}.map-settings>summary{cursor:pointer;list-style:none;padding:9px 14px;background:#fff;border:1px solid #c9d5cf;border-radius:7px;font-size:14px;font-weight:600}
+.map-settings-body{position:absolute;right:0;top:44px;width:min(620px,85vw);display:flex;flex-wrap:wrap;gap:14px;padding:18px;background:#fff;border:1px solid #cfd8d1;border-radius:10px;box-shadow:0 12px 35px #10291c26;z-index:900}
+.map-settings:not([open]) .map-settings-body{display:none}
+.map-legend-float{box-shadow:0 2px 12px #10291c15;border:1px solid #d5ddd7;border-radius:8px;padding:10px 14px;gap:14px}
+.result-context{border:0;background:transparent;margin-bottom:2px;padding:5px 2px 10px}.result-context small{display:none}.result-context strong{font-size:18px}.context-actions button{border:0;background:transparent;text-decoration:underline;padding:6px}
 body.on-territory-stage .live-shell{padding-top:12px}.territory-stage{gap:6px;padding:0!important}.territory-stage .eyebrow{margin:4px 0!important}.territory-stage h1{margin:4px 0!important}.territory-stage .lead{margin:4px 0 10px!important}
+
+.map-legend-float i.good{background:#27a985}.map-legend-float i.conditional{background:#e7b85a}.map-legend-float i.poor{background:#d87464}.map-legend-float i.unknown{background:#b9c2c6}.map-legend-float i.excluded{background:#77858a}

@@ -1,0 +1,28 @@
+SLIDE 5
+Interface
+Select a field
+Choose a crop
+Set an irrigation scenario
+Explore the map
+
+SLIDE 6
+What makes GrowWhere different?
+7 crops, one map
+Compare crop suitability for a selected field.
+Conditions and costs
+Soil, climate and water alongside annual cost and harvest-price context.
+Explicit No Data
+Coverage gaps, source dates and evidence limits stay visible.
+Research screening. Current scored coverage: Kansas pilot.
+
+SLIDE 7
+NEXT STEPS
+Future plans
+Validated coverage
+Expand compatible soil inputs across North America, with clear coverage checks.
+Finer prepared map layers
+Add detailed cached layers while preserving the true resolution of each source.
+Field measurements and planning
+Import soil tests and water inputs before supporting sowing or irrigation advice.
+Winter crops and multiple years
+Model seasons across calendar years and validate results against field outcomes.
