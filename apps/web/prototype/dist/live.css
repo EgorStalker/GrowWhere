@@ -264,3 +264,24 @@ input,select{border:1px solid #96a29a;border-radius:5px;font-variant-numeric:tab
   .map-legend-float{bottom:10px;left:8px;right:8px;gap:8px}
 }
 @media(prefers-reduced-motion:reduce){.live-loading-indicator{animation:none}}
+
+/* Parcel-first workflow. Keep the primary choice and the map within reach. */
+.welcome-compact{display:block;padding:22px!important;margin-bottom:18px!important}
+.welcome-compact .welcome-lead{margin-bottom:0;font-size:18px}
+.mode-options{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0}
+.mode-card{display:grid;gap:12px;text-align:left;padding:24px;border:2px solid #0b0f0e;border-radius:8px;background:#fff;color:#0b0f0e;cursor:pointer}
+.mode-card:hover,.mode-card:focus-visible,.region-choice.active{background:#edfdf5;border-color:#116b4a}
+.mode-card h2{font-size:25px;margin:0}.mode-card p{font-size:17px;line-height:1.5;margin:0}.mode-card b{font-size:18px;color:#0f5d42}
+.region-choice{display:grid;gap:12px;text-align:left;padding:22px;background:#fff;border:2px solid #0b0f0e;border-radius:8px;font-size:20px}.region-choice span{font-size:16px}
+.territory-stage{padding:16px 0!important;margin:0!important}.territory-stage .eyebrow{margin:12px 0!important}.territory-stage h1{font-size:30px;margin:12px 0!important}.territory-stage .lead{font-size:17px;margin:8px 0!important;line-height:1.5}
+.territory-footer{margin:12px 0!important;padding:16px!important;align-items:center}.territory-footer p{margin:0;font-size:16px;line-height:1.5}
+body.on-territory-stage .live-map{height:56vh;min-height:330px}body.on-territory-stage .map-topbar{padding:10px}
+.territory-tools,.context-actions{display:flex;gap:10px;flex-wrap:wrap}.territory-tools button{width:auto;min-height:46px}
+.result-context{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:14px 18px;border:1px solid #cfd5ce;background:white;border-radius:7px;margin-bottom:10px;font-size:14px;line-height:1.5}.result-context strong{font-size:17px}.result-context p{margin:4px 0}.context-actions button{width:auto;padding:8px 12px;min-height:42px}
+.crop-help{display:grid;gap:12px;padding:20px;border:1px solid #cfd5ce;background:#f4faf7;border-radius:8px;margin:18px 0}.crop-help p,.crop-help li{font-size:16px;line-height:1.5}.crop-help>button{justify-self:start;width:auto}.crop-option-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}.crop-option{display:grid;gap:7px;padding:16px;background:#fff;border:1px solid #9dab9e;border-radius:6px;text-align:left}.crop-option b{font-size:18px}.crop-option small{font-size:13px;line-height:1.5}.local-crop-warning{color:#754c11}
+.historical-settings{padding:16px;background:#f3f5f1;border:1px solid #cfd5ce;border-radius:6px}.historical-settings summary{font-size:17px;font-weight:700;cursor:pointer;min-height:36px}.historical-settings[open]{display:grid;gap:14px}.area-value{font-size:19px;font-weight:700}
+@media(max-width:1050px){body.on-map-stage .site-header{height:auto;min-height:64px;padding:10px 16px}.result-context{flex-direction:column;align-items:stretch}.context-actions button{flex:1}}
+@media(max-width:620px){.mode-options{grid-template-columns:1fr;gap:12px}.mode-card{padding:20px}.mode-card h2{font-size:22px}.welcome-compact{padding:16px!important}.territory-tools button{flex:1}.territory-stage h1{font-size:26px}.territory-footer{flex-direction:column;align-items:stretch}.crop-option-list{grid-template-columns:1fr}}
+
+.mode-card .step-num{justify-self:start}
+body.on-territory-stage .live-shell{padding-top:12px}.territory-stage{gap:6px;padding:0!important}.territory-stage .eyebrow{margin:4px 0!important}.territory-stage h1{margin:4px 0!important}.territory-stage .lead{margin:4px 0 10px!important}

@@ -2,7 +2,7 @@
 export const locale = 'uk-UA';
 export const copy = {
   brandTag:'Ваша земля. Зрозумілий вибір.', title:'Що посадити. Де виростити.',
-  stepNames:['Вітання','Культура','Полив і умови','Карта й територія'],
+  stepNames:['Початок','Територія','Культура','Умови','Результати'],
   cropNames:{wheat:'Яра пшениця',soy:'Соя',corn:'Кукурудза',sorghum:'Сорго',barley:'Ярий ячмінь',oats:'Овес',cotton:'Бавовник'},
   cropDefaults:{wheat:'03-15',soy:'05-01',corn:'05-01',sorghum:'05-15',barley:'03-15',oats:'03-15',cotton:'04-20'},
   planningReadiness:{

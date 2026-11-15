@@ -274,10 +274,22 @@ export function setAreaDisplayMode(mode) {
 
 export function getCustomArea() {return customArea;}
 
+// Restore a previously drawn outline without simulating a user selection or
+// triggering dependent analysis. The caller validates the territory first.
+export function setCustomArea(area) {
+  if(!map) return;
+  stopDrawingState();
+  customArea=area?.ring?{kind:area.kind==='rect'?'rect':'polygon',ring:area.ring.map(p=>[...p]),bbox:polygonBounds(area.ring)}:null;
+  areaSummary=null;
+  renderCustomAreaOverlay();
+  refreshPolygonStyles();
+}
+
 export function fitCustomArea() {
   if(!customArea)return;
   const [west,south,east,north]=customArea.bbox;
-  map.fitBounds([[south,west],[north,east]],{padding:[32,32],maxZoom:14});
+  map.invalidateSize({pan:false});
+  map.fitBounds([[south,west],[north,east]],{padding:[32,32],maxZoom:14,animate:false});
 }
 
 function applyBaseLayer() {
@@ -449,7 +461,10 @@ export function clearSelectedFeature() {
   selectedId=null;selectedOutline.clearLayers();
 }
 
-export function focusKansas() {map.fitBounds(coverageOutline.getBounds(),{padding:[18,18],maxZoom:7});}
+export function focusKansas() {
+  map.invalidateSize({pan:false});
+  map.fitBounds(coverageOutline.getBounds(),{padding:[18,18],maxZoom:7,animate:false});
+}
 export function focusDetail() {
   if(customArea){fitCustomArea();return;}
   const center=selectedOutline.getLayers().length?selectedOutline.getBounds().getCenter():map.getCenter();
