@@ -5,6 +5,8 @@ import {aggregateTerritory,recommendedZoomForArea,geodesicAreaHa} from './area-s
 
 import {flowStepNames,validateTerritory,validateConditions,canEnterStep,planningContext} from './user-flow.js';
 import {fetchCropOptions,parcelReferencePoint} from './crop-options.js';
+import {buildCalculationReport,renderReportDialogHtml} from './report.js';
+import {createFieldSnapshot,compareTwoFields,renderFieldCompareDialogHtml} from './field-compare.js';
 
 const CROP_IDS=['wheat','soy','corn','sorghum','barley','oats','cotton'];
 const CROP_CODES={wheat:'SW',soy:'SY',corn:'CO',sorghum:'SG',barley:'BA',oats:'OA',cotton:'CT'};
@@ -69,6 +71,7 @@ let planningLoadingKey=null,planningErrorKey=null,planningController=null,planni
 const root=document.getElementById('app');
 const dialog=document.getElementById('dialog');
 let controller=null,insightsController=null,requestId=0,insightsReqId=0,moveTimer=null,dialogTrigger=null;
+let lastReport=null,compareFieldA=null,compareFieldB=null,awaitingCompareB=false,downloadBusy=false;
 
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cropName=id=>tr(`cropNames.${id}`,id);
@@ -752,6 +755,8 @@ function renderDrawer() {
       ${drawerTabsHtml()}
       <div class="live-status-row">${statusPill(status)}<span class="live-score">${validNumber(result?.score)?`${fmt(result.score)} <small>/ 100</small>`:''}</span></div>
       <p class="drawer-note">${tr(`statusInfo.${status}`)}</p>
+      <div class="live-toolbar">${button('Report & formulas','open-report','primary')}</div>
+      ${compareFieldsDrawerHtml()}
       ${pointPlanningHtml()}
       ${uncertaintyBoxHtml(result?.uncertainty)}
       ${factorBarsHtml(result?.factors,result?.limiting_factor)}
@@ -787,6 +792,8 @@ function renderDrawer() {
       <span class="live-score">${validNumber(summary.score)?`${fmt(summary.score)} <small>/ 100</small>`:''}</span>
     </div>
     ${areaBreakdownHtml(summary)}
+    <div class="live-toolbar">${button('Report & formulas','open-report','primary')}</div>
+    ${compareFieldsDrawerHtml()}
     ${pointPlanningHtml()}
     ${factorBarsHtml(summary.avgFactors)}
     ${waterBalanceHtml(summary.avgWaterBalance)}
@@ -839,11 +846,11 @@ function renderDrawBar() {
   if(!state.drawMode){bar.hidden=true;bar.innerHTML='';return;}
   bar.hidden=false;
   const isPoly=state.drawMode==='polygon';
-  const hint=!isPoly
+  const hint=(awaitingCompareB?'Field A is saved. Draw the boundary of field B. ':'')+(!isPoly
     ?'Drag a rectangle on the map to select an area.'
     :state.drawPointsCount<3
     ?`Click the map to add boundary points (placed ${state.drawPointsCount}, at least 3 required).`
-    :`Points placed: ${state.drawPointsCount}. Click the first green point, double-click, or choose “Finish boundary”.`;
+    :`Points placed: ${state.drawPointsCount}. Click the first green point, double-click, or choose “Finish boundary”.`);
   bar.innerHTML=`<div class="live-draw-controls"><div class="live-draw-modes" role="group" aria-label="Selection mode"><button type="button" class="${isPoly?'active':''}" data-action="draw-mode" data-mode="polygon">Points</button><button type="button" class="${!isPoly?'active':''}" data-action="draw-mode" data-mode="rect">Rectangle</button></div><div class="live-draw-buttons">${isPoly?`<button type="button" data-action="undo-point" ${state.drawPointsCount<1?'disabled':''}>Undo point</button><button type="button" class="accent" data-action="finish-draw" ${state.drawPointsCount<3?'disabled':''}>Finish boundary</button>`:''}<button type="button" data-action="select-view">Entire view</button><button type="button" data-action="cancel-draw">Cancel</button></div></div><p class="live-draw-hint">${hint}</p>`;
 }
 
@@ -1012,6 +1019,7 @@ function applyAnalysisData(data) {
   updateMapText();
   if(state.drawerOpen)loadPlanningReadiness(false);
   if(state.drawerOpen&&state.drawerTab!=='overview')loadPointInsights(false);
+  if(awaitingCompareB&&compareFieldA&&state.areaSummary){awaitingCompareB=false;openCompareFieldsModal();}
 }
 
 async function loadAnalysis(refresh=false) {
@@ -1157,6 +1165,14 @@ function selectZone(feature) {
 }
 
 function handleAreaChange(area) {
+  const outline=validateTerritory({...state,mode:'own_land',customArea:area});
+  if(!outline.valid){
+    state.drawMode=null;state.drawPointsCount=0;awaitingCompareB=false;
+    setCustomArea(state.customArea);
+    if(state.collection)setAnalysis(state.collection,state.areaSummary);
+    state.drawerOpen=!!(state.selected||state.customArea);
+    updateMapText();announce(outline.error);return;
+  }
   state.customArea=area;
   if(state.mode==='own_land')state.ownArea=area;
   state.drawMode=null;state.drawPointsCount=0;
@@ -1183,6 +1199,8 @@ function enterDrawMode(mode='polygon') {
 }
 
 function exitDrawMode() {
+  if(awaitingCompareB)state.drawerOpen=true;
+  awaitingCompareB=false;
   state.drawMode=null;
   state.drawPointsCount=0;
   cancelAreaSelection();
@@ -1213,12 +1231,72 @@ function dialogHeader(title) {
   return `<div class="dialog-header"><h2 id="dialog-title" tabindex="-1">${title}</h2><button type="button" class="close-dialog" data-action="close-dialog" aria-label="Close">×</button></div>`;
 }
 
+function buildCurrentReport(){
+  const target=activeInsightTarget(),water=irrigationInputState(state.irrigation,state.water);
+  return buildCalculationReport({crop:state.crop,cropName:cropName(state.crop),year:state.year,planting:state.planting,
+    irrigationMode:state.irrigation,irrigationMm:water.amountMm,irrigationKnown:water.known,targetYear:state.targetYear,
+    scaleHa:state.scaleHa,mode:state.mode,selected:state.selected,areaSummary:state.areaSummary,
+    coordinates:target?[target.lon,target.lat]:null,insights:insightsCache.get(insightKey(target)),
+    planning:planningCache.get(planningKey(target))?.data,economics:economy(state.crop),meta:state.meta});
+}
+function captureCurrentFieldSnapshot(){
+  if(state.loading||(!state.selected&&!state.areaSummary))return null;
+  const report=buildCurrentReport(),r=state.selected?.properties?.result||{};
+  return createFieldSnapshot({report,label:report.header.scopeLabel,geometryId:state.selected?String(state.selected.properties?.id??state.selected.id):JSON.stringify(state.customArea?.ring),
+    coordinates:report.header.coordinates,area:state.selected?null:state.customArea,
+    areaHa:state.selected?null:state.areaSummary.areaHa,irrigationLabel:waterScenarioLabel(),
+    waterBalance:state.selected?r.water_balance:state.areaSummary.avgWaterBalance});
+}
+function compareFieldsDrawerHtml(){
+  if(!state.selected&&!state.areaSummary)return '';
+  if(!compareFieldA)return `<div class="compare-2-box"><button type="button" class="secondary" data-action="pin-compare-a">Compare with another field</button></div>`;
+  const current=captureCurrentFieldSnapshot();
+  return `<div class="compare-2-box"><strong>Field A saved: ${escape(compareFieldA.label)}</strong><p>Select another map zone or draw a second boundary.</p><div class="compare-2-actions">${current&&current.id!==compareFieldA.id?button('Compare with field A','compare-with-a','primary'):''}${button('Draw field B','draw-compare-b')}${compareFieldA.area?button('Restore field A','restore-compare-a'):''}${button('Reset comparison','clear-compare-fields')}</div></div>`;
+}
+function openCompareFieldsModal(){
+  if(!compareFieldA)return;
+  compareFieldB=captureCurrentFieldSnapshot();
+  if(compareFieldB)renderDialog('compare-fields');
+}
+async function downloadCurrentPdf(comparison=false){
+  if(downloadBusy)return;
+  const payload=comparison?{...compareFieldB.report,comparison:compareTwoFields(compareFieldA,compareFieldB)}:lastReport;
+  if(!payload)return;
+  downloadBusy=true;
+  const buttons=[...dialog.querySelectorAll('[data-action^="download-"]')];
+  buttons.forEach(b=>b.disabled=true);
+  const status=document.getElementById('report-download-status');if(status)status.textContent='Preparing PDF…';
+  try{
+    const response=await fetch('/api/report-pdf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!response.ok){const error=await response.json();throw Error(error.error||'PDF generation failed.');}
+    if(!response.headers.get('content-type')?.includes('application/pdf'))throw Error('The server did not return a PDF.');
+    const url=URL.createObjectURL(await response.blob()),a=document.createElement('a');
+    a.href=url;a.download=`growwhere-${comparison?'comparison':'report'}-${payload.header.crop}-${payload.header.year}.pdf`;
+    document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    if(status?.isConnected)status.textContent='PDF downloaded.';
+  }catch(error){if(status?.isConnected)status.textContent=error.message;}
+  finally{downloadBusy=false;buttons.forEach(b=>{if(b.isConnected)b.disabled=false;});}
+}
+function restoreCompareFieldA(){
+  if(!compareFieldA?.area)return;
+  const h=compareFieldA.report.header,area=JSON.parse(JSON.stringify(compareFieldA.area));
+  awaitingCompareB=false;invalidateAnalysis();state.mode=h.mode;state.crop=h.crop;state.year=h.year;state.planting=h.planting;
+  state.irrigation=h.irrigationMode;state.water=h.irrigationMm;state.customArea=area;
+  if(state.mode==='own_land')state.ownArea=area;
+  state.scaleHa=String(compareFieldA.areaHa);state.drawerOpen=true;
+  setCustomArea(area);renderView();fitCustomArea();loadAnalysis(false);
+}
+
 function renderDialog(type,show=true) {
   if(show)dialogTrigger=document.activeElement;
   dialog.dataset.type=type;
-  dialog.className=type==='compare'?'compare-dialog':'';
+  dialog.className=['compare','report','compare-fields'].includes(type)?'compare-dialog report-dialog':'';
   let title='',content='';
-  if(type==='help') {
+  if(type==='report'){
+    title='Report & formulas';content=renderReportDialogHtml(lastReport);
+  }else if(type==='compare-fields'){
+    title='Compare two fields';content=renderFieldCompareDialogHtml(compareTwoFields(compareFieldA,compareFieldB));
+  }else if(type==='help') {
     title='How GrowWhere works';
     content=`<p class="live-dialog-text">Workflow:</p><div class="help-list">${[['1. Your goal','Choose your own field or search for suitable areas.'],['2. Area','Draw a closed boundary in the North America map area or choose North America as the search region.'],['3. Crop',`Choose one of ${CROP_IDS.length} crops. For your own field, a preliminary historical comparison is available at a reference point.`],['4. Conditions','Specify your scale and irrigation availability. Historical observations and a future target year are separate parameters.'],['5. Results map','Check suitability, sources and data gaps. Future planting dates and recommended irrigation are not yet available.']].map(([head,text],i)=>`<div class="help-item"><span class="step-num">${String(i+1).padStart(2,'0')}</span><div><h3>${head}</h3><p>${text}</p></div></div>`).join('')}</div>${button('Got it','close-dialog','primary')}`;
   }else if(type==='compare') {
@@ -1287,6 +1365,24 @@ document.addEventListener('click',event=>{
     setSignalLayer(state.signalLayer,state.year);
     ['index','ndvi','smap'].forEach(mode=>document.getElementById(`signal-${mode}`)?.classList.toggle('active',state.signalLayer===mode));
     updateMapText();
+  }else if(action==='open-report'){
+    lastReport=buildCurrentReport();renderDialog('report');
+  }else if(action==='download-report-pdf'){
+    downloadCurrentPdf(false);
+  }else if(action==='download-comparison-pdf'){
+    downloadCurrentPdf(true);
+  }else if(action==='pin-compare-a'){
+    compareFieldA=captureCurrentFieldSnapshot();compareFieldB=null;renderDrawer();announce('Field A saved. Select another map zone or draw field B.');
+  }else if(action==='draw-compare-b'){
+    if(compareFieldA){awaitingCompareB=true;state.drawerOpen=false;enterDrawMode('polygon');}
+  }else if(action==='compare-with-a'){
+    openCompareFieldsModal();
+  }else if(action==='swap-compare-fields'){
+    [compareFieldA,compareFieldB]=[compareFieldB,compareFieldA];renderDrawer();renderDialog('compare-fields',false);
+  }else if(action==='clear-compare-fields'){
+    compareFieldA=null;compareFieldB=null;awaitingCompareB=false;renderDrawer();
+  }else if(action==='restore-compare-a'){
+    restoreCompareFieldA();
   }else if(action==='drawer-tab'){
     const tab=target.dataset.tab||'overview';
     state.drawerTab=tab;

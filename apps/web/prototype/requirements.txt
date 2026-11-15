@@ -1,0 +1,2 @@
+# PDF reports; the numerical pipeline and map store remain standard-library Python.
+matplotlib==3.10.8

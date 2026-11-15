@@ -95,6 +95,39 @@ class Handler(SimpleHTTPRequestHandler):
                 'Unsupported crop':'This crop is not supported yet.'}
             return self.json(400,{'error':messages.get(str(exc),'Check your parameters: '+str(exc)),'status':'invalid_request'})
         except Exception as exc: return self.json(502,{'error':str(exc)[:400],'status':'source_unavailable'})
+    def do_POST(self):
+        if urlsplit(self.path).path!='/api/report-pdf':
+            return self.json(404,{'error':'Unknown API endpoint'})
+        try:
+            length=int(self.headers.get('Content-Length','0'))
+            if not 0<length<=2*1024*1024:
+                return self.json(400,{'error':'Report data must be between 1 byte and 2 MiB.'})
+            def invalid_constant(value):
+                raise ValueError('Non-finite JSON numbers are not supported')
+            payload=json.loads(self.rfile.read(length).decode('utf-8'),parse_constant=invalid_constant)
+            from growwhere.report_pdf import generate_report_pdf
+            pdf_bytes=generate_report_pdf(payload)
+            h=payload['header']
+            crop=h['crop']
+            year=str(h.get('year',''))
+            year=year if year.isdigit() and len(year)==4 else 'historical'
+            kind='comparison' if payload.get('comparison') else 'report'
+            self.send_response(200)
+            self.send_header('Content-Type','application/pdf')
+            self.send_header('Content-Disposition',f'attachment; filename="growwhere-{kind}-{crop}-{year}.pdf"')
+            self.send_header('Cache-Control','no-store')
+            self.send_header('X-Content-Type-Options','nosniff')
+            self.send_header('Content-Length',str(len(pdf_bytes)))
+            self.end_headers()
+            try:self.wfile.write(pdf_bytes)
+            except (BrokenPipeError,ConnectionResetError,ConnectionAbortedError):pass
+        except (ValueError,TypeError,KeyError) as exc:
+            return self.json(400,{'error':'Could not create this report: '+str(exc)[:250]})
+        except ImportError:
+            return self.json(503,{'error':'PDF generation is temporarily unavailable.'})
+        except Exception:
+            return self.json(500,{'error':'Could not generate the PDF. Please try again.'})
+
     def log_message(self,fmt,*args):
         # Do not log user coordinates or budgets from request URLs.
         if args and isinstance(args[0],str) and '/api/' in args[0]: return

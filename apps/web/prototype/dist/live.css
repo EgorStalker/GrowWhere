@@ -300,3 +300,20 @@ body.on-territory-stage .live-map{height:56vh;min-height:330px}body.on-territory
 body.on-territory-stage .live-shell{padding-top:12px}.territory-stage{gap:6px;padding:0!important}.territory-stage .eyebrow{margin:4px 0!important}.territory-stage h1{margin:4px 0!important}.territory-stage .lead{margin:4px 0 10px!important}
 
 .map-legend-float i.good{background:#27a985}.map-legend-float i.conditional{background:#e7b85a}.map-legend-float i.poor{background:#d87464}.map-legend-float i.unknown{background:#b9c2c6}.map-legend-float i.excluded{background:#77858a}
+
+/* Report and field comparison, ported into the current map interface. */
+.report-dialog{width:min(1040px,96vw)}
+.report-doc{display:grid;gap:16px;font-size:15px;line-height:1.5}
+.report-toolbar,.compare-2-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.report-toolbar button,.compare-2-actions button{width:auto;min-height:44px}
+.report-note{color:#52645b;font-size:14px}.report-verdict{padding:14px;background:#eef8f3;border-left:4px solid #27a985}
+.report-warning{padding:14px;background:#fff6df;border-left:4px solid #d7a036}
+.formula-math{padding:14px;background:#f3f6f3;font-family:ui-monospace,Consolas,monospace;font-size:13px;overflow-wrap:anywhere}
+.report-doc summary{cursor:pointer;font-weight:700;padding:12px 0;min-height:44px}
+.report-table-wrap{overflow-x:auto}.formula-table{width:100%;border-collapse:collapse;font-size:14px}
+.formula-table th,.formula-table td{padding:11px 12px;border-bottom:1px solid #d4ded7;text-align:left;vertical-align:top}
+.formula-table th{background:#eff5f1;font-weight:700}.formula-table td:last-child{overflow-wrap:anywhere}
+.compare-2-box{display:grid;gap:10px;padding-top:14px;border-top:1px solid #d1dcd4;font-size:14px}.compare-2-box p{margin:0}
+.compare-fields-top{display:grid;grid-template-columns:1fr 1fr;gap:24px}.compare-field-card{padding:16px;background:#f3f7f4;border-top:3px solid #27a985}
+.compare-tag{font-size:13px;color:#52645b}.compare-field-card h3{font-size:20px;margin:6px 0}.compare-field-card>strong{font-size:28px}
+@media(max-width:620px){.compare-fields-top{grid-template-columns:1fr}.formula-table th,.formula-table td{padding:9px;font-size:13px}}

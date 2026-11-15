@@ -17,6 +17,7 @@ build/
 .artifacts/
 .DS_Store
 Thumbs.db
+~$*
 
 # Bulk data stays local; metadata and deliberately small samples stay versioned.
 /data/raw/*

@@ -1,0 +1,26 @@
+﻿category,link_text,url,actual_use
+NASA data/resources,NASA POWER Daily API,https://power.larc.nasa.gov/docs/services/api/temporal/daily/,"Historical daily temperature, precipitation, humidity, wind and radiation for seasonal climate, FAO-56 ET₀/ETc and the index; optional wetness context."
+NASA data/resources,NASA GIBS — MODIS Terra NDVI 8-Day,https://nasa-gibs.github.io/gibs-api-docs/,Optional visual layer MODIS_Terra_NDVI_8Day; not a numerical suitability factor.
+NASA data/resources,NASA GIBS — SMAP L4 root-zone soil moisture,https://nasa-gibs.github.io/gibs-api-docs/,Optional visual layer SMAP_L4_Analyzed_Root_Zone_Soil_Moisture; not a numerical suitability factor.
+Space agency partner and other data/resources,USDA NRCS Soil Data Access / SSURGO,https://sdmdataaccess.nrcs.usda.gov/,Soil survey units and dominant-component soil properties at 0–30 cm.
+Space agency partner and other data/resources,USDA CroplandCROS / Cropland Data Layer,https://croplandcros.scinet.usda.gov/,Land-cover checks for the selected historical year and crop-history context.
+Space agency partner and other data/resources,USDA ERS Commodity Costs and Returns,https://www.ers.usda.gov/data-products/commodity-costs-and-returns,Annual regional production costs and historical harvest prices.
+Space agency partner and other data/resources,NOAA National Weather Service API,https://www.weather.gov/documentation/services-web-api,Separate current-weather readiness check; unavailable or invalid forecasts remain explicit gaps.
+Space agency partner and other data/resources,K-State Crop Planting Temperatures,https://www.riley.k-state.edu/crops-livestock/soils-and-crops/cropplantingtemps/,"Published thresholds, distinguished from actual soil measurements or advice."
+Space agency partner and other data/resources,K-State Kansas Corn Management 2025,https://bookstore.ksre.ksu.edu/pubs/kansas-corn-management-2025_MF3208.pdf,Partial local agronomic reference in the rules registry.
+Space agency partner and other data/resources,K-State Kansas Crop Planting Guide,https://bookstore.ksre.ksu.edu/pubs/kansas-crop-planting-guide_L818.pdf,Partial planting guidance and its regional applicability constraints.
+Space agency partner and other data/resources,FAO-56 Crop Evapotranspiration,https://www.fao.org/4/x0490e/x0490e00.htm,ET₀ method and general crop-coefficient reference; local index thresholds remain GrowWhere assumptions.
+Space agency partner and other data/resources,OpenStreetMap contributors,https://www.openstreetmap.org/copyright,Street basemap and map screenshots; displayed attribution is retained.
+Space agency partner and other data/resources,Esri World Imagery,https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer,Optional satellite basemap with provider-specific attribution; tiles are not bundled for offline redistribution.
+Space agency partner and other data/resources,Leaflet 1.9.4,https://leafletjs.com/,Interactive map library. Its BSD 2-Clause notice is included with the vendored files.
+Space agency partner and other data/resources,Python,https://www.python.org/,"API, source processing, numerical method and report generation."
+Space agency partner and other data/resources,SQLite / RTree,https://www.sqlite.org/rtree.html,Prepared map storage and spatial lookups.
+Space agency partner and other data/resources,Matplotlib,https://matplotlib.org/,PDF rendering and comparison/factor charts; runtime dependencies are installed by the pinned requirement.
+Space agency partner and other data/resources,DejaVu Fonts,https://dejavu-fonts.github.io/License.html,Fonts used in the analytical PDF reports; accompanying notice is preserved.
+Space agency partner and other data/resources,Arial font family,https://learn.microsoft.com/en-us/typography/font-list/arial,System font referenced by the updated presentation; no separate font file is distributed.
+Space agency partner and other data/resources,Node.js,https://nodejs.org/,JavaScript checks and the optional development launcher.
+Space agency partner and other data/resources,OpenAI Codex,https://openai.com/codex/,"AI assistance for implementation, documentation, testing and presentation authoring; not a source of fabricated measurements."
+Space agency partner and other data/resources,Git,https://git-scm.com/,Version control and integration of the team repository.
+Space agency partner and other data/resources,GitHub,https://github.com/EgorStalker/GrowWhere,"Public project, code and demonstration hosting."
+Space agency partner and other data/resources,GrowWhere logo — RightVersion,https://github.com/EgorStalker/GrowWhere/blob/main/apps/web/prototype/dist/assets/logo.png,Team-provided product branding.
+Space agency partner and other data/resources,GrowWhere interface screenshots,https://github.com/EgorStalker/GrowWhere/tree/main/deliverables/GrowWhere-demo/screenshots,"Captures of the real English interface, including two-field comparison and PDF equations."

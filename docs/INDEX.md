@@ -14,6 +14,9 @@
 | [prepared-maps.md](prepared-maps.md) | Активне читання готових карт із SQLite, версії, job, TTL і справжні межі покриття |
 | [north-america-data.md](north-america-data.md) | Аудит джерел для розширення на Північну Америку та критичні прогалини |
 | [demo-handoff.md](demo-handoff.md) | Демонстрація англомовного сайту, заміни слайдів 5–7, перевірки й наступний крок |
+| [field-reports.md](field-reports.md) | Порівняння двох полів, JSON/API PDF-звіту, формули та межі відтворення розрахунку |
+| [submission.en.md](submission.en.md) | Англомовні назва, короткий опис, деталі та посилання для заявки |
+| [submission-resources.md](submission-resources.md) | Реально використані NASA та інші ресурси з повними публічними URL |
 | [data-readiness.md](data-readiness.md) | Критичні прогалини перед реалізацією: прогноз, температура ґрунту, локальні правила, межі рекомендацій |
 | [planning-data.md](planning-data.md) | Етап підключення прогнозу й перевірених правил; контракт готовності та наступні етапи сценарію й кешу |
 | [live-methodology.md](live-methodology.md) | Формула, ваги, FAO-56, масштаби та правила «Без даних» |
