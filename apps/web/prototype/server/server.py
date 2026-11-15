@@ -97,6 +97,33 @@ class Handler(SimpleHTTPRequestHandler):
                 'Unsupported crop':'Ця культура ще не підтримується.'}
             return self.json(400,{'error':messages.get(str(exc),'Перевірте обрані параметри: '+str(exc)),'status':'invalid_request'})
         except Exception as exc: return self.json(502,{'error':str(exc)[:400],'status':'source_unavailable'})
+    def do_POST(self):
+        parsed=urlsplit(self.path)
+        if parsed.path!='/api/report-pdf': return self.json(404,{'error':'Unknown API endpoint'})
+        try:
+            length=int(self.headers.get('Content-Length','0') or 0)
+            if length<=0 or length>2*1024*1024:
+                return self.json(400,{'error':'Некоректний розмір даних звіту.'})
+            raw=self.rfile.read(length)
+            payload=json.loads(raw.decode('utf-8'))
+            from growwhere.report_pdf import generate_report_pdf
+            pdf_bytes=generate_report_pdf(payload)
+            crop=str((payload.get('header') or {}).get('crop') or 'field')
+            year=str((payload.get('header') or {}).get('year') or '')
+            safe_name=f'growwhere-report-{crop}-{year}.pdf'.replace('"','')
+            self.send_response(200)
+            self.send_header('Content-Type','application/pdf')
+            self.send_header('Content-Disposition',f'attachment; filename="{safe_name}"')
+            self.send_header('Cache-Control','no-store')
+            self.send_header('X-Content-Type-Options','nosniff')
+            self.send_header('Content-Length',str(len(pdf_bytes)))
+            self.end_headers()
+            try: self.wfile.write(pdf_bytes)
+            except (BrokenPipeError,ConnectionResetError,ConnectionAbortedError): pass
+        except ValueError as exc:
+            return self.json(400,{'error':f'Помилка формування PDF: {exc}'})
+        except Exception as exc:
+            return self.json(500,{'error':f'Не вдалося згенерувати PDF: {str(exc)[:300]}'})
     def log_message(self,fmt,*args):
         # Do not log user coordinates or budgets from request URLs.
         if args and isinstance(args[0],str) and '/api/' in args[0]: return

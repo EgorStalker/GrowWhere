@@ -4,6 +4,8 @@ import {aggregateTerritory,recommendedZoomForArea,geodesicAreaHa} from './area-s
 
 import {flowStepNames,validateTerritory,validateConditions,canEnterStep,planningContext} from './user-flow.js';
 import {fetchCropOptions,parcelReferencePoint} from './crop-options.js';
+import {buildCalculationReport,renderReportDialogHtml} from './report.js';
+import {createFieldSnapshot,compareTwoFields,renderFieldCompareDialogHtml} from './field-compare.js';
 
 const CROP_IDS=['wheat','soy','corn','sorghum','barley','oats','cotton'];
 const CROP_CODES={wheat:'ПШ',soy:'СО',corn:'КУ',sorghum:'СР',barley:'ЯЧ',oats:'ОВ',cotton:'БВ'};
@@ -70,7 +72,7 @@ const planningCache=new Map();
 let planningLoadingKey=null,planningErrorKey=null,planningController=null,planningRequestId=0;
 const root=document.getElementById('app');
 const dialog=document.getElementById('dialog');
-let controller=null,insightsController=null,requestId=0,insightsReqId=0,moveTimer=null,dialogTrigger=null;
+let controller=null,insightsController=null,requestId=0,insightsReqId=0,moveTimer=null,dialogTrigger=null,lastReport=null,compareFieldA=null,compareFieldB=null,awaitingCompareB=false,compareOriginArea=null,restoreOriginAfterCompare=false;
 
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const cropName=id=>tr(`cropNames.${id}`,id);
@@ -254,7 +256,7 @@ function renderMapTopbar() {
     </div>
     <div class="topbar-group">
       <label for="year-select">Рік історичних даних</label>
-      <select id="year-select">${[currentYear,currentYear-1,currentYear-2,currentYear-3].map(year=>`<option value="${year}" ${year===state.year?'selected':''}>${year}</option>`).join('')}</select>
+      <select id="year-select">${[0,1,2,3,4,5].map(i=>currentYear-i).map(year=>`<option value="${year}" ${year===state.year?'selected':''}>${year}</option>`).join('')}</select>
     </div>
     <div class="topbar-group">
       <label for="planting-date">Початок історичного розрахунку</label>
@@ -346,7 +348,7 @@ function cropCard(crop) {
 }
 
 function welcomeScreen() {
-  return `<section class="welcome-stage" aria-labelledby="page-title"><div class="welcome-hero welcome-compact"><div class="welcome-copy"><p class="eyebrow">GrowWhere · RIGHTVERSION</p><h1 class="live-step-heading" id="page-title" tabindex="-1">Що вирощувати і де?</h1><p class="welcome-lead">Оберіть свій шлях. Порівнюємо ґрунти, історичний клімат NASA POWER та 7-денний прогноз у пілотній області Канзасу, США.</p></div></div><div class="mode-options"><button type="button" class="mode-card" data-action="choose-mode" data-mode="own_land"><span class="step-num">01</span><h2>У мене є ділянка</h2><p>Позначте межі на карті, оберіть культуру та перевірте умови для цієї території.</p><b>Обрати мою ділянку →</b></button><button type="button" class="mode-card" data-action="choose-mode" data-mode="find_land"><span class="step-num">02</span><h2>Знайти придатні території</h2><p>Оберіть культуру й умови. Карта покаже історичну придатність зон.</p><b>Почати пошук →</b></button></div><aside class="planning-readiness"><strong>Що доступно зараз</strong><p>Працює історична оцінка (NASA POWER · USDA SSURGO/CDL · економіка ERS) і 7-денний модельний прогноз погоди та ґрунту (NOAA NWS · Open-Meteo). На Кроці 4 ви можете уточнити тип поливу й фазу культури для розрахунку тижневого водного орієнтира.</p></aside></section>`;
+  return `<section class="welcome-stage" aria-labelledby="page-title"><div class="welcome-hero welcome-compact"><div class="welcome-copy"><p class="eyebrow">GrowWhere · RIGHTVERSION</p><h1 class="live-step-heading" id="page-title" tabindex="-1">Що вирощувати і де?</h1></div></div><div class="mode-options"><button type="button" class="mode-card" data-action="choose-mode" data-mode="own_land"><span class="step-num">01</span><h2>У мене є ділянка</h2><p>Позначте межі на карті, оберіть культуру та перевірте умови для цієї території.</p><b>Обрати мою ділянку →</b></button><button type="button" class="mode-card" data-action="choose-mode" data-mode="find_land"><span class="step-num">02</span><h2>Знайти придатні території</h2><p>Оберіть культуру й умови. Карта покаже історичну придатність зон.</p><b>Почати пошук →</b></button></div></section>`;
 }
 function territoryFooterHtml() {
   const validation=validateTerritory(state);
@@ -457,7 +459,7 @@ function irrigationScreen() {
           <div class="live-inline-fields">
             <div class="live-field">
               <label for="year-select">Рік спостережень</label>
-              <select id="year-select">${[currentYear,currentYear-1,currentYear-2,currentYear-3].map(year=>`<option value="${year}" ${year===state.year?'selected':''}>${year}${year===currentYear?' · неповний рік':''}</option>`).join('')}</select>
+              <select id="year-select">${[0,1,2,3,4,5].map(i=>currentYear-i).map(year=>`<option value="${year}" ${year===state.year?'selected':''}>${year}${year===currentYear?' · неповний рік':''}</option>`).join('')}</select>
             </div>
           </div>
           <div class="live-field">
@@ -645,7 +647,7 @@ async function loadPointInsights(refresh=false) {
 }
 
 function drawerTabsHtml() {
-  const tabs=[['overview','Огляд'],['compare','7 культур'],['risk','Ризик (5р)'],['rotation','Сівозміна']];
+  const tabs=[['overview','Огляд'],['compare','7 культур'],['risk','5 років'],['rotation','Сівозміна']];
   return `<div class="drawer-tabs" role="tablist" aria-label="Деталізація ділянки">${tabs.map(([id,label])=>`<button type="button" role="tab" aria-selected="${state.drawerTab===id}" class="drawer-tab ${state.drawerTab===id?'active':''}" data-action="drawer-tab" data-tab="${id}">${label}</button>`).join('')}</div>`;
 }
 
@@ -705,11 +707,28 @@ function compareTabHtml(data) {
 
 function riskTabHtml(data) {
   const risk=data.climate_risk;
-  if(!risk)return '<p class="drawer-note">Немає даних для оцінки ризику.</p>';
+  const hist=data.landcover_history;
+  if(!risk&&!hist)return '<p class="drawer-note">Немає даних для 5-річного перегляду поля.</p>';
+  const histSection=hist?`
+    <div class="drawer-sub">
+      <strong>5-річна історія культур поля (USDA CDL, 10–30 м)</strong>
+      <div class="history-5y-strip">
+        ${(hist.years||[]).map(item=>{
+          const label=item.crop_name||item.label||'Без даних';
+          const isActive=Number(item.year)===Number(state.year);
+          return `<div class="history-year-chip ${item.category==='cropland'?'cropland':''} ${isActive?'active':''}"><b>${item.year}</b><span>${escape(label)}</span><button type="button" class="mini-year-btn" data-action="inspect-history-year" data-year="${item.year}">${isActive?'Поточний рік':'На карту →'}</button></div>`;
+        }).join('')}
+      </div>
+      <div class="monoculture-banner ${hist.monoculture_alert?'alert':'ok'}">${escape(hist.diagnosis||'')}</div>
+      <small class="drawer-note">${escape(hist.note||'')}</small>
+    </div>
+  `:'';
+  if(!risk)return histSection;
   const sum=risk.summary||{};
   const rainText=(validNumber(sum.rain_min_mm)&&validNumber(sum.rain_max_mm))?`${fmt(sum.rain_min_mm,0)}–${fmt(sum.rain_max_mm,0)} мм`:'—';
   const scoreText=(validNumber(sum.score_min)&&validNumber(sum.score_max))?`${fmt(sum.score_min,0)}–${fmt(sum.score_max,0)}`:'—';
   return `
+    ${histSection}
     <div class="tradeoffs-strip">
       <div><span>Добрих / Умовних</span><b>${fmt(sum.good_count)} + ${fmt(sum.conditional_count)} із ${fmt(sum.years_scored)}</b></div>
       <div><span>Розмах балу</span><b>${scoreText}</b></div>
@@ -721,14 +740,18 @@ function riskTabHtml(data) {
         const st=y.status||'unknown';
         const pct=validNumber(y.score)?Math.max(4,Math.round(y.score)):0;
         const wet=validNumber(y.root_zone_wetness)?`волог. корінь ${Math.round(y.root_zone_wetness*100)}%`:'';
+        const cdlYear=(hist?.years||[]).find(h=>h.year===y.year);
+        const cdlText=cdlYear?(cdlYear.crop_name||cdlYear.label):'';
+        const isCurrent=Number(y.year)===Number(state.year);
         return `
-          <div class="risk-year-row">
+          <div class="risk-year-row ${isCurrent?'current':''}">
             <div class="risk-year-head">
-              <strong>${y.year}</strong>
+              <strong>${y.year}${cdlText?` · ${escape(cdlText)}`:''}</strong>
               <span>${validNumber(y.precipitation_mm)?`${fmt(y.precipitation_mm,0)} мм опадів`:'Неповний сезон'}${y.heat_days>0?` · спека ${y.heat_days} дн.`:''}${wet?` · ${wet}`:''}</span>
               <b>${validNumber(y.score)?`${fmt(y.score,0)}/100`:'—'}</b>
             </div>
             <div class="factor-track"><span class="factor-fill ${escape(st)}" style="width:${pct}%"></span></div>
+            <button type="button" class="mini-switch-btn" data-action="inspect-history-year" data-year="${y.year}">${isCurrent?'Обраний рік на карті':`Переглянути ${y.year} на карті`}</button>
           </div>
         `;
       }).join('')}
@@ -823,6 +846,7 @@ function renderDrawer() {
       ${drawerTabsHtml()}
       <div class="live-status-row">${statusPill(status)}<span class="live-score">${validNumber(result?.score)?`${fmt(result.score)} <small>/ 100</small>`:''}</span></div>
       <p class="drawer-note">${tr(`statusInfo.${status}`)}</p>
+      ${compareFieldsDrawerHtml()}
       ${pointPlanningHtml()}
       ${uncertaintyBoxHtml(result?.uncertainty)}
       ${factorBarsHtml(result?.factors,result?.limiting_factor)}
@@ -833,7 +857,7 @@ function renderDrawer() {
       ${climateCard(p.climate)}
       ${scalesContextHtml()}
       ${economyCard()}
-      <div class="live-toolbar">${button('Ближче до ґрунтів','detail')}${button('Формула','formula')}</div>
+      <div class="live-toolbar">${button('Детальний звіт і формули','open-report','primary')}${button('Ближче до ґрунтів','detail')}${button('Формула','formula')}</div>
     `;
     return;
   }
@@ -858,6 +882,7 @@ function renderDrawer() {
       <span class="live-score">${validNumber(summary.score)?`${fmt(summary.score)} <small>/ 100</small>`:''}</span>
     </div>
     ${areaBreakdownHtml(summary)}
+    ${compareFieldsDrawerHtml()}
     ${pointPlanningHtml()}
     ${factorBarsHtml(summary.avgFactors)}
     ${waterBalanceHtml(summary.avgWaterBalance)}
@@ -869,6 +894,7 @@ function renderDrawer() {
     </dl>
     ${scalesContextHtml()}
     <div class="live-toolbar">
+      ${button('Детальний звіт і формули','open-report','primary')}
       ${button(state.areaDisplay==='solid'?'Зони всередині':'Суцільний колір','toggle-area-display')}
       ${button('Наблизити','detail')}
       ${button('Очистити','clear-area')}
@@ -910,12 +936,15 @@ function renderDrawBar() {
   if(!state.drawMode){bar.hidden=true;bar.innerHTML='';return;}
   bar.hidden=false;
   const isPoly=state.drawMode==='polygon';
+  const comparePrefix=awaitingCompareB&&compareFieldA
+    ? `Поле А («${escape(compareFieldA.label)}») зафіксовано. Тепер окресліть 2-й контур (Поле Б): `
+    : '';
   const hint=!isPoly
-    ?'Проведіть рамку по карті, щоб виділити область.'
+    ?'проведіть рамку по карті, щоб виділити область.'
     :state.drawPointsCount<3
-    ?`Клікайте по карті для точок межі (поставлено ${state.drawPointsCount}, потрібно щонайменше 3).`
-    :`Поставлено точок: ${state.drawPointsCount}. Натисніть зелену першу точку, двічі клікніть або «Завершити контур».`;
-  bar.innerHTML=`<div class="live-draw-controls"><div class="live-draw-modes" role="group" aria-label="Режим виділення"><button type="button" class="${isPoly?'active':''}" data-action="draw-mode" data-mode="polygon">По точках</button><button type="button" class="${!isPoly?'active':''}" data-action="draw-mode" data-mode="rect">Рамка</button></div><div class="live-draw-buttons">${isPoly?`<button type="button" data-action="undo-point" ${state.drawPointsCount<1?'disabled':''}>Скасувати точку</button><button type="button" class="accent" data-action="finish-draw" ${state.drawPointsCount<3?'disabled':''}>Завершити контур</button>`:''}<button type="button" data-action="select-view">Усе вікно</button><button type="button" data-action="cancel-draw">Скасувати</button></div></div><p class="live-draw-hint">${hint}</p>`;
+    ?`клікайте по карті для точок межі (поставлено ${state.drawPointsCount}, потрібно щонайменше 3).`
+    :`поставлено точок: ${state.drawPointsCount}. Натисніть зелену першу точку, двічі клікніть або «Завершити контур».`;
+  bar.innerHTML=`<div class="live-draw-controls"><div class="live-draw-modes" role="group" aria-label="Режим виділення"><button type="button" class="${isPoly?'active':''}" data-action="draw-mode" data-mode="polygon">По точках</button><button type="button" class="${!isPoly?'active':''}" data-action="draw-mode" data-mode="rect">Рамка</button></div><div class="live-draw-buttons">${isPoly?`<button type="button" data-action="undo-point" ${state.drawPointsCount<1?'disabled':''}>Скасувати точку</button><button type="button" class="accent" data-action="finish-draw" ${state.drawPointsCount<3?'disabled':''}>Завершити контур</button>`:''}<button type="button" data-action="select-view">Усе вікно</button><button type="button" data-action="cancel-draw">Скасувати</button></div></div><p class="live-draw-hint">${comparePrefix}${comparePrefix?hint:hint.charAt(0).toUpperCase()+hint.slice(1)}</p>`;
 }
 
 function renderAreaBanner() {
@@ -1082,6 +1111,11 @@ function applyAnalysisData(data) {
   updateMapText();
   if(state.drawerOpen)loadPlanningReadiness(false);
   if(state.drawerOpen&&state.drawerTab!=='overview')loadPointInsights(false);
+  if(awaitingCompareB&&compareFieldA&&state.areaSummary){
+    awaitingCompareB=false;
+    restoreOriginAfterCompare=!!compareOriginArea;
+    openCompareFieldsModal();
+  }
 }
 
 async function loadAnalysis(refresh=false) {
@@ -1226,13 +1260,52 @@ function selectZone(feature) {
   announce(`${featureName(feature)}. ${tr('statuses.'+(feature.properties?.result?.status||'unknown'))}`);
 }
 
+function cloneArea(area) {
+  if(!area?.ring)return null;
+  return {
+    kind:area.kind==='rect'?'rect':'polygon',
+    ring:area.ring.map(p=>[...p]),
+    bbox:area.bbox?[...area.bbox]:undefined
+  };
+}
+
+function restoreOriginalFieldAfterCompare() {
+  const origin=cloneArea(compareOriginArea);
+  compareOriginArea=null;
+  restoreOriginAfterCompare=false;
+  compareFieldA=null;
+  compareFieldB=null;
+  awaitingCompareB=false;
+  if(!origin||state.step!==5)return;
+  invalidateAnalysis();
+  state.customArea=origin;
+  if(state.mode==='own_land')state.ownArea=origin;
+  state.scaleHa=String(geodesicAreaHa(origin.ring));
+  state.drawerOpen=true;
+  if(state.mapReady){
+    setCustomArea(origin);
+    fitCustomArea();
+  }
+  updateMapText();
+  loadAnalysis(false);
+  announce('Повернуто до вашої початкової ділянки.');
+}
+
 function handleAreaChange(area) {
+  const validationCandidate={...state,customArea:area};
+  const validation=validateTerritory(validationCandidate);
+  if(state.step===5&&awaitingCompareB&&!validation.valid&&compareOriginArea){
+    restoreOriginalFieldAfterCompare();
+    state.error=validation.error||'2-й контур поза межами пілотної області Канзасу.';
+    updateMapText();
+    announce(state.error);
+    return;
+  }
   state.customArea=area;
   if(state.mode==='own_land')state.ownArea=area;
   state.drawMode=null;state.drawPointsCount=0;
   state.cropOptions=null;state.cropOptionsError=null;
   invalidateAnalysis();
-  const validation=validateTerritory(state);
   state.territoryError=validation.valid?null:validation.error;
   if(validation.areaHa)state.scaleHa=String(validation.areaHa);
   setAreaDisplayMode('solid');
@@ -1253,8 +1326,12 @@ function enterDrawMode(mode='polygon') {
 }
 
 function exitDrawMode() {
+  const wasCompare=awaitingCompareB;
+  awaitingCompareB=false;
+  if(wasCompare){compareOriginArea=null;restoreOriginAfterCompare=false;}
   state.drawMode=null;
   state.drawPointsCount=0;
+  if(wasCompare&&state.step===5&&(state.customArea||state.selected))state.drawerOpen=true;
   cancelAreaSelection();
   updateMapText();
 }
@@ -1283,12 +1360,164 @@ function dialogHeader(title) {
   return `<div class="dialog-header"><h2 id="dialog-title" tabindex="-1">${title}</h2><button type="button" class="close-dialog" data-action="close-dialog" aria-label="Закрити">×</button></div>`;
 }
 
+function captureCurrentFieldSnapshot() {
+  const target=activeInsightTarget();
+  const iKey=insightKey(target);
+  const ins=iKey?insightsCache.get(iKey):null;
+  if(state.selected){
+    const p=state.selected.properties||{};
+    const r=p.result||{};
+    return createFieldSnapshot({
+      label:featureName(state.selected),
+      crop:state.crop,
+      cropName:cropName(state.crop),
+      year:state.year,
+      planting:state.planting,
+      irrigationLabel:waterScenarioLabel(),
+      areaHa:null,
+      coordinates:p.center||(target?[target.lon,target.lat]:null),
+      status:r.status,
+      score:r.score,
+      factors:r.factors,
+      limitingFactor:r.limiting_factor,
+      waterBalance:r.water_balance,
+      soil:p.soil||ins?.soil||null,
+      landcoverHistory:ins?.landcover_history||null,
+      climateRisk:ins?.climate_risk||null
+    });
+  }
+  if(state.areaSummary){
+    const s=state.areaSummary;
+    const minF=Object.entries(s.avgFactors||{}).sort((a,b)=>a[1]-b[1])[0]?.[0]||null;
+    return createFieldSnapshot({
+      label:`Контур (${formatArea(s.areaHa)})`,
+      crop:state.crop,
+      cropName:cropName(state.crop),
+      year:state.year,
+      planting:state.planting,
+      irrigationLabel:waterScenarioLabel(),
+      areaHa:s.areaHa,
+      coordinates:target?[target.lon,target.lat]:null,
+      status:s.status,
+      score:s.score,
+      factors:s.avgFactors,
+      limitingFactor:minF,
+      waterBalance:s.avgWaterBalance,
+      soil:ins?.soil||null,
+      coveragePct:s.coveragePct,
+      soilPhRange:s.soilPhRange,
+      tempRange:s.tempRange,
+      landcoverHistory:ins?.landcover_history||null,
+      climateRisk:ins?.climate_risk||null
+    });
+  }
+  return null;
+}
+
+async function ensureSnapshotInsights(snapshot) {
+  if(!snapshot||!snapshot.coordinates||(snapshot.landcoverHistory&&snapshot.climateRisk))return;
+  const [lon,lat]=snapshot.coordinates;
+  const cond=conditions();
+  const params=new URLSearchParams({
+    crop:snapshot.crop||cond.crop,
+    year:String(snapshot.year||cond.year),
+    planting:snapshot.planting||cond.planting,
+    irrigation_mm:cond.irrigation_mm,
+    irrigation_known:cond.irrigation_known,
+    lon:String(Number(lon).toFixed(5)),
+    lat:String(Number(lat).toFixed(5)),
+    years_back:'5',
+    refresh:'0'
+  });
+  try{
+    const resp=await fetch(`/api/insights?${params}`);
+    if(!resp.ok)return;
+    const data=await resp.json();
+    snapshot.landcoverHistory=data.landcover_history||null;
+    snapshot.climateRisk=data.climate_risk||null;
+    if(!snapshot.soil&&data.soil)snapshot.soil=data.soil;
+  }catch{}
+}
+
+function compareFieldsDrawerHtml() {
+  const cur=captureCurrentFieldSnapshot();
+  if(!cur)return '';
+  if(!compareFieldA){
+    return `<div class="compare-2-box"><div><strong>Порівняння 2 полів поруч</strong><span>Зафіксуйте цю ділянку як Поле А та одразу окресліть 2-й контур для порівняння.</span></div><button type="button" class="secondary" data-action="pin-compare-a">Порівняти з іншою ділянкою</button></div>`;
+  }
+  const same=compareFieldA.id===cur.id;
+  return `<div class="compare-2-box active"><div><strong>Поле А: ${escape(compareFieldA.label)}</strong><span>${escape(compareFieldA.cropName)} · ${compareFieldA.score!==null?`${fmt(compareFieldA.score,1)}/100`:escape(compareFieldA.statusLabel)}</span></div><div class="compare-2-actions">${!same?`<button type="button" class="primary" data-action="compare-with-a">Порівняти з Полем А</button>`:''}<button type="button" class="secondary" data-action="draw-compare-b">Намалювати 2-й контур</button><button type="button" class="secondary" data-action="clear-compare-fields">Скинути</button></div></div>`;
+}
+
+async function openCompareFieldsModal() {
+  if(!compareFieldA)return;
+  compareFieldB=captureCurrentFieldSnapshot();
+  if(!compareFieldB)return;
+  renderDialog('compare-fields',true);
+  await Promise.allSettled([ensureSnapshotInsights(compareFieldA),ensureSnapshotInsights(compareFieldB)]);
+  if(dialog.open&&dialog.dataset.type==='compare-fields')renderDialog('compare-fields',false);
+}
+
+function buildCurrentReport() {
+  const target=activeInsightTarget();
+  const iKey=insightKey(target);
+  const pKey=planningKey(target);
+  const water=irrigationInputState(state.irrigation,state.water);
+  return buildCalculationReport({
+    crop:state.crop,
+    cropName:cropName(state.crop),
+    year:state.year,
+    planting:state.planting,
+    irrigationMode:state.irrigation,
+    irrigationMm:water.amountMm,
+    irrigationKnown:water.known,
+    targetYear:state.targetYear,
+    scaleHa:state.scaleHa,
+    mode:state.mode,
+    selected:state.selected,
+    areaSummary:state.areaSummary,
+    insights:iKey?insightsCache.get(iKey):null,
+    planning:pKey?planningCache.get(pKey)?.data:null,
+    economics:economy(state.crop),
+    sources:state.sources,
+    meta:state.meta
+  });
+}
+
+async function openReportModal() {
+  lastReport=buildCurrentReport();
+  renderDialog('report',true);
+  const target=activeInsightTarget();
+  const pending=[];
+  if(!state.sources)pending.push(loadSources());
+  if(target){
+    const iKey=insightKey(target);
+    const pKey=planningKey(target);
+    if(iKey&&!insightsCache.has(iKey))pending.push(loadPointInsights(false));
+    if(pKey&&!planningCache.has(pKey))pending.push(loadPlanningReadiness(false));
+  }
+  if(pending.length){
+    await Promise.allSettled(pending);
+    if(dialog.open&&dialog.dataset.type==='report'){
+      lastReport=buildCurrentReport();
+      renderDialog('report',false);
+    }
+  }
+}
+
 function renderDialog(type,show=true) {
   if(show)dialogTrigger=document.activeElement;
   dialog.dataset.type=type;
-  dialog.className=type==='compare'?'compare-dialog':'';
+  dialog.className=type==='compare'?'compare-dialog':(type==='report'||type==='compare-fields')?'compare-dialog report-dialog':'';
   let title='',content='';
-  if(type==='help') {
+  if(type==='report'){
+    title='Детальний звіт обчислень та формул';
+    lastReport=lastReport||buildCurrentReport();
+    content=renderReportDialogHtml(lastReport);
+  }else if(type==='compare-fields'){
+    title='Порівняння двох полів (Поле А vs Поле Б)';
+    content=(compareFieldA&&compareFieldB)?renderFieldCompareDialogHtml(compareTwoFields(compareFieldA,compareFieldB)):'<p class="live-dialog-text">Спочатку зафіксуйте Поле А та оберіть друге поле для порівняння.</p>';
+  }else if(type==='help') {
     title='Як працює GrowWhere';
     content=`<p class="live-dialog-text">Послідовність роботи:</p><div class="help-list">${[['1. Спосіб пошуку','Оберіть свою ділянку або пошук придатних територій.'],['2. Територія','Позначте замкнений контур у пілотній області Канзасу або оберіть Канзас як область пошуку.'],['3. Культура',`Оберіть одну з ${CROP_IDS.length} культур. Для своєї ділянки доступне попереднє історичне порівняння в центральній точці.`],['4. Умови','Вкажіть масштаби та доступність поливу. Історичний сезон і майбутній цільовий рік — окремі параметри.'],['5. Карта результатів','Перевірте колір, джерела й прогалини. Дата майбутньої посадки й рекомендована кількість поливу ще недоступні.']].map(([head,text],i)=>`<div class="help-item"><span class="step-num">${String(i+1).padStart(2,'0')}</span><div><h3>${head}</h3><p>${text}</p></div></div>`).join('')}</div>${button('Зрозуміло','close-dialog','primary')}`;
   }else if(type==='compare') {
@@ -1417,6 +1646,86 @@ document.addEventListener('click',event=>{
   else if(['help','compare','formula','sources'].includes(action)){
     if(action==='sources'&&!state.sources)loadSources().then(()=>renderDialog('sources'));
     else renderDialog(action);
+  }else if(action==='open-report'){
+    openReportModal();
+  }else if(action==='download-report-pdf'){
+    lastReport=lastReport||buildCurrentReport();
+    target.disabled=true;
+    const origText=target.textContent;
+    target.textContent='Формуємо PDF…';
+    fetch('/api/report-pdf',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(lastReport)
+    }).then(async resp=>{
+      if(!resp.ok){
+        const err=await resp.json().catch(()=>({}));
+        throw new Error(err.error||`HTTP ${resp.status}`);
+      }
+      return resp.blob();
+    }).then(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download=`growwhere-report-${state.crop||'field'}-${state.year}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+    }).catch(err=>{
+      announce(`Не вдалося зберегти PDF: ${err.message}`);
+    }).finally(()=>{
+      target.disabled=false;
+      target.textContent=origText;
+    });
+  }else if(action==='pin-compare-a'){
+    const snap=captureCurrentFieldSnapshot();
+    if(snap){
+      if(!compareOriginArea&&state.customArea)compareOriginArea=cloneArea(state.customArea);
+      compareFieldA=snap;
+      ensureSnapshotInsights(compareFieldA);
+      awaitingCompareB=true;
+      state.drawerOpen=false;
+      enterDrawMode('polygon');
+      announce(`Поле А зафіксовано: ${snap.label}. Тепер намалюйте 2-й контур для порівняння.`);
+    }
+  }else if(action==='draw-compare-b'){
+    if(compareFieldA){
+      if(!compareOriginArea&&state.customArea)compareOriginArea=cloneArea(state.customArea);
+      awaitingCompareB=true;
+      state.drawerOpen=false;
+      enterDrawMode('polygon');
+      announce('Намалюйте 2-й контур на карті для порівняння з Полем А.');
+    }
+  }else if(action==='compare-with-a'){
+    openCompareFieldsModal();
+  }else if(action==='swap-compare-fields'){
+    if(compareFieldA&&compareFieldB){
+      const tmp=compareFieldA;compareFieldA=compareFieldB;compareFieldB=tmp;
+      renderDialog('compare-fields',false);
+    }
+  }else if(action==='clear-compare-fields'){
+    const shouldRestore=restoreOriginAfterCompare||!!compareOriginArea;
+    if(dialog.open&&dialog.dataset.type==='compare-fields'){
+      dialog.close();
+      if(shouldRestore&&compareOriginArea)restoreOriginalFieldAfterCompare();
+    }else if(shouldRestore){
+      restoreOriginalFieldAfterCompare();
+    }else{
+      compareFieldA=null;compareFieldB=null;awaitingCompareB=false;
+      renderDrawer();
+    }
+  }else if(action==='inspect-history-year'){
+    const y=Number(target.dataset.year);
+    if(Number.isInteger(y)&&y>=1984&&y<=currentYear){
+      invalidateAnalysis();
+      state.year=y;
+      state.planting=`${y}-${state.planting.slice(5)}`;
+      syncTopbarControls();
+      setSignalLayer(state.signalLayer,state.year);
+      loadAnalysis(false);
+      loadEconomics();
+    }
   }else if(action==='compare-crop'){
     setCrop(target.dataset.crop);
     dialog.close();
@@ -1475,7 +1784,12 @@ document.addEventListener('input',event=>{
   }
 });
 
-dialog.addEventListener('close',()=>{if(dialogTrigger?.isConnected)dialogTrigger.focus({preventScroll:true});});
+dialog.addEventListener('close',()=>{
+  if(dialogTrigger?.isConnected)dialogTrigger.focus({preventScroll:true});
+  if(dialog.dataset.type==='compare-fields'&&restoreOriginAfterCompare&&compareOriginArea){
+    restoreOriginalFieldAfterCompare();
+  }
+});
 dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
 
 document.addEventListener('keydown',event=>{

@@ -175,6 +175,94 @@ def _multi_year_risk(support_key, pt_soil, crop, year, planting_mm_dd, irrigatio
     }
 
 
+def _landcover_history(lon, lat, year, pt_cover, years_back=5, refresh=False):
+    current_year = dt.datetime.now(dt.timezone.utc).year
+    years_back = max(1, min(10, int(years_back)))
+    candidate_years = list(range(max(1997, year - years_back + 1), min(year, current_year) + 1))
+    by_year = {year: pt_cover}
+    other_years = [y for y in candidate_years if y != year]
+
+    def fetch_year(y):
+        try:
+            res = landcover.classify_points([{'id': f'cdl-{y}', 'lon': lon, 'lat': lat}], y, refresh)
+            return y, (res.get('by_id') or {}).get(f'cdl-{y}')
+        except Exception:
+            return y, None
+
+    if other_years:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+            for y, cov in pool.map(fetch_year, other_years):
+                by_year[y] = cov
+
+    rows = []
+    for y in candidate_years:
+        cov = by_year.get(y) or {}
+        detected = detect_cdl_crop(cov)
+        rows.append({
+            'year': y,
+            'code': cov.get('code'),
+            'category': cov.get('category', 'unknown'),
+            'label': cov.get('label'),
+            'crop_id': detected,
+            'crop_name': PROFILES[detected]['name'] if detected in PROFILES else None,
+            'allow_analysis': cov.get('allow_analysis'),
+            'resolution_m': cov.get('resolution_m'),
+        })
+
+    crop_keys = []
+    for row in rows:
+        key = row['crop_id'] or (row['label'].lower() if row.get('category') == 'cropland' and row.get('label') else None)
+        display = row['crop_name'] or row['label']
+        crop_keys.append((key, display))
+
+    max_streak = 0
+    streak_label = None
+    cur_streak = 0
+    prev_key = None
+    rotation_changes = 0
+    unique_keys = set()
+    for key, display in crop_keys:
+        if key:
+            unique_keys.add(key)
+            if key == prev_key:
+                cur_streak += 1
+            else:
+                if prev_key is not None:
+                    rotation_changes += 1
+                cur_streak = 1
+            if cur_streak > max_streak:
+                max_streak = cur_streak
+                streak_label = display
+            prev_key = key
+        else:
+            cur_streak = 0
+            prev_key = None
+
+    monoculture_alert = max_streak >= 2
+    if max_streak >= 3:
+        diagnosis = f'Виявлено тривалу монокультуру («{streak_label}» {max_streak} роки поспіль): підвищений ризик хвороб, шкідників та виснаження ґрунту.'
+    elif max_streak == 2:
+        diagnosis = f'Повторний посів («{streak_label}» 2 роки поспіль): бажано чергувати культури в наступному сезоні.'
+    elif rotation_changes > 0 and len(unique_keys) >= 2:
+        diagnosis = f'Збалансована сівозміна: виявлено чергування ({len(unique_keys)} різні культури за {len(rows)} р.) без повторення поспіль.'
+    elif len(unique_keys) == 1:
+        diagnosis = f'За наявними знімками зафіксовано культуру «{streak_label}».'
+    else:
+        diagnosis = 'На вибраній точці за цей період переважає пасовище, неорний покрив або бракує окремих річних знімків CDL.'
+
+    return {
+        'years_requested': len(candidate_years),
+        'years': rows,
+        'unique_crops': len(unique_keys),
+        'rotation_changes': rotation_changes,
+        'monoculture_streak': max_streak,
+        'monoculture_crop': streak_label if monoculture_alert else None,
+        'monoculture_alert': monoculture_alert,
+        'diagnosis': diagnosis,
+        'note': 'Історія покриву в одній точці за знімками USDA CDL (10–30 м). Це спостереження покриву, а не межа всього поля.',
+    }
+
+
 def _rotation_advice(crop, pt_cover, pt_soil, crop_rows):
     by_crop = {r['crop']: r for r in crop_rows}
     detected = detect_cdl_crop(pt_cover)
@@ -292,6 +380,7 @@ def analyze_point_insights(lon, lat, crop, year, planting, irrigation_mm=0, irri
     tradeoffs = _summarize_tradeoffs(crop_rows)
     planting_mm_dd = planting[5:]
     risk = _multi_year_risk(support, pt_soil, crop, year, planting_mm_dd, irrigation_mm, irrigation_known, years_back=years_back, refresh=refresh)
+    history = _landcover_history(lon, lat, year, pt_cover, years_back=years_back, refresh=refresh)
     rotation = _rotation_advice(crop, pt_cover, pt_soil, crop_rows)
     active_row = next((r for r in crop_rows if r['crop'] == crop), crop_rows[0] if crop_rows else None)
 
@@ -310,12 +399,13 @@ def analyze_point_insights(lon, lat, crop, year, planting, irrigation_mm=0, irri
                 {'layer': 'NASA SMAP L4 (шар карти)', 'scale': '~9 км'},
                 {'layer': 'NASA MODIS Terra NDVI (шар карти)', 'scale': '250–500 м (8 днів)'},
                 {'layer': 'USDA SSURGO (ґрунти 0–30 см)', 'scale': 'Контури ґрунтової зйомки'},
-                {'layer': 'USDA CDL (землекористування)', 'scale': '30 м піксель'},
+                {'layer': 'USDA CDL (землекористування)', 'scale': '10–30 м піксель (залежно від року)'},
             ],
         },
         'crop_comparison': crop_rows,
         'tradeoffs': tradeoffs,
         'climate_risk': risk,
+        'landcover_history': history,
         'rotation_advice': rotation,
         'completed_at': utcnow(),
     }

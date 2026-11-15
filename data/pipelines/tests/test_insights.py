@@ -150,6 +150,32 @@ class InsightsTests(unittest.TestCase):
         self.assertEqual(res['rotation_advice']['anchor_source'], 'usda_cdl')
         self.assertEqual(len(res['rotation_advice']['plans']), 3)
         self.assertAlmostEqual(res['moisture_and_cover']['surface_wetness'], 0.52, places=3)
+        self.assertEqual(res['landcover_history']['years_requested'], 5)
+        self.assertTrue(res['landcover_history']['monoculture_alert'])
+        self.assertEqual(res['landcover_history']['monoculture_streak'], 5)
+
+    def test_landcover_history_mixed_rotation_no_monoculture_alert(self):
+        labels = {2020: 'Corn', 2021: 'Soybeans', 2022: 'Winter Wheat', 2023: 'Sorghum', 2024: 'Corn'}
+
+        def fake_soil(features, refresh=False):
+            return {f['id']: soil_sample() for f in features}, None
+
+        def fake_cdl(centers, year, refresh=False):
+            return {'by_id': {c['id']: {'allow_analysis': True, 'category': 'cropland', 'label': labels.get(year, 'Corn'), 'year': year} for c in centers}, 'meta': [], 'errors': []}
+
+        with patch.object(insights.soil, 'points', side_effect=fake_soil), \
+             patch.object(insights.landcover, 'classify_points', side_effect=fake_cdl), \
+             patch.object(insights, 'power_point', side_effect=lambda lon, lat, year, refresh=False: (daily_power_fixture(year), None)), \
+             patch.object(insights, 'economics', return_value={'missing': ['economics']}):
+            res = insights.analyze_point_insights(-97.5, 38.5, 'corn', 2024, '2024-05-01', 150, True, years_back=5)
+
+        hist = res['landcover_history']
+        self.assertEqual(hist['years_requested'], 5)
+        self.assertEqual(len(hist['years']), 5)
+        self.assertFalse(hist['monoculture_alert'])
+        self.assertEqual(hist['monoculture_streak'], 1)
+        self.assertEqual(hist['rotation_changes'], 4)
+        self.assertEqual(hist['unique_crops'], 4)
 
     def test_excluded_cdl_point_preserves_potential_score_for_comparison(self):
         def fake_soil(features, refresh=False):
